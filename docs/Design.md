@@ -43,6 +43,23 @@ Intelligence). Feedback claro de "estou ouvindo".
 A transição entre estados é suave (aparição/sumiço da pílula e do glow). Após
 processar, o texto é inserido (ver [[Arquitetura]]) e o overlay volta a **idle**.
 
+## 🪟 Setup de primeira execução
+Na primeira vez, o app abre uma tela (tema **claro**) para definir **atalho**,
+**idioma** e **modelo** — com a mesma identidade do overlay e **sem emojis**
+(ver [[ADR-007-setup-primeira-execucao]]). Decisões de design:
+
+- **Branco/frosted**, coerente com a pílula do overlay; o **orb é o único ponto de
+  cor**. Layout em **duas regiões** (rail lateral + conteúdo), fugindo do cartão
+  escuro centralizado genérico.
+- **Orb real** (mesmo shader `orb-core.js`) no rail, que **energiza** durante a
+  captura do atalho e **pulsa** ao concluir (com o chime).
+- **Keycaps táteis**; modificadores em glifos mac (⌘ ⌥ ⌃ ⇧). Idiomas com nome
+  nativo + tag de código; modelos com **medidores** de velocidade/precisão.
+
+![Setup — passo 1 (atalho)](assets/setup-atalho.png)
+![Setup — passo 2 (idioma)](assets/setup-idioma.png)
+![Setup — passo 3 (modelo)](assets/setup-modelo.png)
+
 ## Princípios de design
 
 - **Discrição:** translúcido, sempre no topo, mas sem roubar o foco nem bloquear cliques.

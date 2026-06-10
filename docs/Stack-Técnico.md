@@ -41,6 +41,16 @@ como child process via `src/main/audio.js`.
 IDLE → RECORDING → TRANSCRIBING → IDLE. Atalho ignorado durante TRANSCRIBING.
 Tray icon com tooltip dinâmico e menu "Sair". Detalhes em [[ADR-006-backend-core]].
 
+## 🪟 Setup de primeira execução (`src/setup/`)
+Tela (tema claro) que captura atalho/idioma/modelo na 1ª execução; persiste em
+`~/.mestrewrite/config.json` via `src/main/configManager.js`. Reúsa o orb
+(`orb-core.js`). Decisões em [[ADR-007-setup-primeira-execucao]].
+
+## 📦 electron-builder (empacotamento)
+Gera `.app`/`.dmg`/`.zip` (config no campo `build` do `package.json`). Não assinado.
+O **ícone** do app é renderizado a partir do orb (`scripts/gerar-icone.js` +
+`scripts/gerar-icns.sh`). Decisões em [[ADR-008-empacotamento-electron-builder]].
+
 ## 🎨 WebGL + CSS + Web Audio (overlay)
 O orb é um **shader iridescente em WebGL puro** (`orb-core.js`), renderizado numa
 **pílula** com waveform (`pilula.js`); a borda é um **glow em CSS** (`conic-gradient`

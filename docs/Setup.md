@@ -34,6 +34,22 @@ npm start     # = electron .
 > node_modules/electron/dist/Electron.app/Contents/MacOS/Electron .
 > ```
 
+> Na **primeira execução** (sem `~/.mestrewrite/config.json`), abre a tela de
+> **setup** para definir atalho, idioma e modelo; ao concluir, o app salva a config
+> e se relança (ver [[ADR-007-setup-primeira-execucao]]).
+
+## 3b. 📦 Build (empacotar como app)
+Gerar um app macOS (`.app`, `.dmg`, `.zip`) com `electron-builder`
+(ver [[ADR-008-empacotamento-electron-builder]]):
+```bash
+npm run dist     # → dist/MestreWrite-<versão>-arm64.dmg (e .zip)
+npm run pack     # build rápido só do .app (sem empacotar)
+npm run icone    # regenera o ícone do app a partir do orb
+```
+> Builds **não assinados** (open source): na 1ª abertura use **clique direito →
+> Abrir** p/ passar pelo Gatekeeper. O app empacotado ainda precisa de `sox`,
+> `whisper-cpp` e do modelo acessíveis (ver passos 1–2).
+
 ## 4. 🔐 Permissões do macOS (primeira vez)
 O app **precisa** de duas permissões — sem elas grava/cola falham com `Notification`:
 

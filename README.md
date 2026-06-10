@@ -32,6 +32,15 @@ Veja o escopo em [docs/MVP.md](docs/MVP.md) e a direção em [docs/Roadmap.md](d
 A documentação completa está organizada como um **vault Obsidian** em [`docs/`](docs/).
 Comece por [docs/00-Home.md](docs/00-Home.md).
 
+## 📸 Capturas
+
+Tela de **primeira execução** (definir atalho, idioma e modelo) — tema claro,
+com o orb como rosto do app:
+
+| Atalho | Idioma | Modelo |
+|:------:|:------:|:------:|
+| ![Atalho](docs/assets/setup-atalho.png) | ![Idioma](docs/assets/setup-idioma.png) | ![Modelo](docs/assets/setup-modelo.png) |
+
 ## 📋 Pré-requisitos
 
 - [Homebrew](https://brew.sh/) (macOS)

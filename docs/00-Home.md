@@ -34,6 +34,8 @@ voz local, offline e open source para desktop.
 - [[ADR-004-overlay-visual]] — como o overlay (orb + borda) foi construído (v1).
 - [[ADR-005-overlay-pilula-webgl]] — overlay v2: pílula + orb WebGL + glow + som.
 - [[ADR-006-backend-core]] — state machine + módulos de áudio/transcrição/inserção.
+- [[ADR-007-setup-primeira-execucao]] — tela de setup (atalho/idioma/modelo), tema claro.
+- [[ADR-008-empacotamento-electron-builder]] — build `.dmg`/`.zip` + ícone do orb.
 
 ---
 

@@ -16,8 +16,14 @@ Direção do MestreWrite, em fases. Cada fase entrega valor sozinha.
 - [x] Máquina de estados (IDLE → RECORDING → TRANSCRIBING → IDLE) — `src/main/main.js`.
 - [x] Overlay com orb WebGL e glow nas bordas — `src/overlay/` ([[ADR-005-overlay-pilula-webgl]]).
 - [x] Configuração centralizada — `src/main/config.js`.
+- [x] Setup de primeira execução (atalho/idioma/modelo) — `src/setup/` ([[ADR-007-setup-primeira-execucao]]).
+- [x] Empacotamento `.dmg`/`.zip` + ícone do orb — `electron-builder` ([[ADR-008-empacotamento-electron-builder]]).
 
 Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA de correção).
+
+> 🔜 **Para o `.dmg` rodar de fábrica:** resolver `sox`/`whisper-cli` em caminhos do
+> Homebrew (o app lançado pelo Finder herda um `PATH` mínimo). Depois: build
+> **x64/universal**, **assinatura/notarização** e **CI** (GitHub Actions).
 
 ## Fase 2 — Correção por IA 🔜
 - [ ] Camada de correção inteligente (pontuação, limpeza, concordância).

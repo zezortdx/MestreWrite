@@ -19,6 +19,8 @@ Apertar um atalho, falar, e ver o **texto cru** aparecer no app em foco — tudo
 - ✅ **Overlay** com orb WebGL e glow nas bordas, estados idle/listening/processing (ver [[Design]] e [[ADR-005-overlay-pilula-webgl]]).
 - ✅ **Máquina de estados** IDLE → RECORDING → TRANSCRIBING → IDLE em `src/main/main.js` ([[ADR-006-backend-core]]).
 - ✅ **Configuração centralizada** (atalho, idioma, caminho do modelo) → `src/main/config.js`.
+- ✅ **Setup de primeira execução** (atalho/idioma/modelo, tema claro) → `src/setup/` ([[ADR-007-setup-primeira-execucao]]).
+- ✅ **Empacotamento** `.dmg`/`.zip` + ícone do orb (`electron-builder`) ([[ADR-008-empacotamento-electron-builder]]).
 
 ## ❌ Fora do escopo (por enquanto)
 

@@ -50,19 +50,24 @@ de um **ícone próprio** coerente com a identidade (o orb).
 **Negativas / trade-offs**
 - Build **não assinado/notarizado** → aviso do Gatekeeper na 1ª abertura.
 - Só `arm64` por enquanto (x64/universal ficam como melhoria).
-- ⚠️ **PATH no app empacotado**: lançado pelo Finder, o app herda um `PATH` mínimo e
-  pode **não achar `sox`/`whisper-cli`** instalados via Homebrew. É o principal item
-  para o `.dmg` rodar de fábrica (resolver os binários em caminhos comuns do brew ao
-  fazer `spawn`). Ver [[Roadmap]].
+
+> ✅ **PATH resolvido:** aberto pelo Finder, o app herdaria um `PATH` mínimo (sem
+> `/opt/homebrew/bin`). `src/main/binpath.js` acrescenta os diretórios comuns do
+> Homebrew/MacPorts ao `process.env.PATH` no startup, então `sox`/`whisper-cli`/
+> `osascript` são encontrados. Há também checagem de dependências no startup, com
+> notificação e o comando `brew install` se algo faltar.
 
 ## Arquivos
 ### Criados
 - `scripts/gerar-icone.js`, `scripts/icone.html`, `scripts/gerar-icns.sh`
 - `build-assets/icon.icns`, `build-assets/icon.png`
 
+- `src/main/binpath.js` — resolve binários (PATH do Homebrew) p/ o app aberto pelo Finder.
+
 ### Modificados
 - `package.json` — campo `build`, scripts (`dist`/`pack`/`icone`), metadados, dep `electron-builder`.
-- `README.md` — seção "Build (empacotar como app)".
+- `src/main/main.js` — aplica `pathAumentado()` no startup + checagem de dependências.
+- `README.md` — seções "Baixar e instalar (uso normal)" e "Build".
 
 ## Relacionado
 - [[Stack-Técnico]] · [[Setup]] · [[ADR-001-electron]] · [[ADR-007-setup-primeira-execucao]]

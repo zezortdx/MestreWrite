@@ -22,9 +22,11 @@ Direção do MestreWrite, em fases. Cada fase entrega valor sozinha.
 
 Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA de correção).
 
-> 🔜 **Para o `.dmg` rodar de fábrica:** resolver `sox`/`whisper-cli` em caminhos do
-> Homebrew (o app lançado pelo Finder herda um `PATH` mínimo). Depois: build
-> **x64/universal**, **assinatura/notarização** e **CI** (GitHub Actions).
+- [x] App empacotado encontra `sox`/`whisper-cli` do Homebrew (resolve o `PATH` no
+  startup — `src/main/binpath.js`) + checagem de dependências.
+
+> 🔜 **Próximos:** instalador único (empacotar deps + modelo, ou baixar o modelo no
+> app), build **x64/universal**, **assinatura/notarização** e **CI** (GitHub Actions).
 
 ## Fase 2 — Correção por IA 🔜
 - [ ] Camada de correção inteligente (pontuação, limpeza, concordância).

@@ -7,6 +7,12 @@
 const { app, BrowserWindow, globalShortcut, screen, Notification, Tray, Menu, nativeImage, ipcMain } = require('electron');
 const path = require('path');
 
+// ── PATH p/ binários externos ────────────────────────────────────────────────
+// Aberto pelo Finder, o app herda um PATH mínimo (sem /opt/homebrew/bin). Sem
+// isto, sox/whisper-cli não são encontrados. Aplicado antes de qualquer spawn.
+const { pathAumentado, binarioExiste } = require('./binpath');
+process.env.PATH = pathAumentado();
+
 // ── Setup de primeira execução ───────────────────────────────────────────────
 // O configManager é carregado antes dos módulos de negócio para evitar
 // caching de imports com valores default antes do setup salvar a config real.
@@ -249,6 +255,17 @@ app.whenReady().then(() => {
 
   if (process.platform === 'darwin' && app.dock) {
     app.dock.hide();
+  }
+
+  // Dependências externas (Homebrew). Avisa cedo, com o comando de instalação.
+  const faltando = [];
+  if (!binarioExiste('sox')) faltando.push('sox');
+  if (!binarioExiste('whisper-cli')) faltando.push('whisper-cpp');
+  if (faltando.length) {
+    notificar(
+      'MestreWrite — Dependências faltando',
+      `Instale no Terminal:\nbrew install ${faltando.join(' ')}`
+    );
   }
 
   if (!modeloExiste()) {

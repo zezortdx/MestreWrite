@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- CSP estrita: nada de conteúdo remoto, só os arquivos locais do overlay. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:;"
+    />
+    <title>MestreWrite — Overlay</title>
+    <link rel="stylesheet" href="overlay.css" />
+  </head>
+  <body class="estado-idle">
+    <!-- Borda gradiente cônica suave (cantos arredondados) ao redor da tela. -->
+    <div class="borda" aria-hidden="true"></div>
+
+    <!-- Flare de ativação (bloom cinemático nas bordas ao acionar o atalho). -->
+    <div class="bloom" aria-hidden="true"></div>
+
+    <!-- Indicador pílula: mini-orb WebGL + waveform reagindo ao estado. -->
+    <div class="pilula" aria-hidden="true">
+      <canvas class="orb-mini"></canvas>
+      <div class="ondas"></div>
+    </div>
+
+    <!-- Orb WebGL desativada (substituída pela pílula). Para reativar,
+         descomente o bloco .orb-wrap e o <script src="orb.js"> abaixo. -->
+    <!--
+    <div class="orb-wrap" aria-hidden="true">
+      <canvas id="orb" class="orb"></canvas>
+    </div>
+    -->
+
+    <script src="orb-core.js"></script>
+    <script src="pilula.js"></script>
+    <!-- orb.js (orb grande) desativado; orb-core.js é o módulo do orb agora. -->
+    <!-- <script src="orb.js"></script> -->
+  </body>
+</html>

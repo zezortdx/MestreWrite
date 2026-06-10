@@ -1,0 +1,618 @@
+/* setup.css — configuração inicial do MestreWrite (tema CLARO).
+   Coerente com a PÍLULA do overlay, que também é branca/frosted (docs/Design.md):
+   superfície branca, o ORB iridescente é o único ponto de cor, keycaps táteis,
+   halo colorido suave atrás do cartão. Layout em duas regiões (rail + conteúdo)
+   p/ fugir do cartão-centralizado genérico. Sem emojis. */
+
+@property --angulo {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+:root {
+  /* ── Tinta (texto) ── */
+  --tinta: #1d1726;
+  --tinta-suave: #66607a;
+  --tinta-fraca: #9b94ab;
+
+  /* ── Superfícies ── */
+  --branco: #ffffff;
+  --papel: #fbfaff;
+  --rail-1: #fbf8ff;
+  --rail-2: #f3ecff;
+  --linha: rgba(29, 23, 38, 0.08);
+  --linha-forte: rgba(29, 23, 38, 0.14);
+
+  /* ── Acento (violeta — o orb dita a paleta) ── */
+  --violeta: #8b4dff;
+  --violeta-forte: #6a2fe0; /* p/ texto/contraste sobre branco */
+  --magenta: #c64bff;
+  --azul: #5e7cff;
+  --acento-fundo: rgba(139, 77, 255, 0.08);
+  --acento-fundo-2: rgba(139, 77, 255, 0.14);
+  --acento-borda: rgba(139, 77, 255, 0.4);
+  --ok: #1f9d57;
+
+  /* ── Raios ── */
+  --r-cartao: 26px;
+  --r-md: 15px;
+  --r-sm: 11px;
+
+  /* ── Movimento ── */
+  --saida: cubic-bezier(0.2, 0, 0, 1);
+  --mola: cubic-bezier(0.34, 1.5, 0.5, 1);
+  --rapido: 130ms;
+  --base: 220ms;
+  --lento: 440ms;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--tinta);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.palco {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.regiao-arrasta { -webkit-app-region: drag; }
+.regiao-nao-arrasta,
+.captura,
+.btn,
+.opcao,
+.passo,
+.comando { -webkit-app-region: no-drag; }
+
+/* ───────────────── Halo colorido atrás do cartão (assinatura) ───────────────── */
+.halo {
+  position: absolute;
+  width: 560px;
+  height: 460px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from var(--angulo),
+    var(--azul),
+    var(--violeta),
+    var(--magenta),
+    #ff7ad9,
+    var(--magenta),
+    var(--violeta),
+    var(--azul)
+  );
+  filter: blur(72px);
+  opacity: 0.5;
+  animation: girar-halo 16s linear infinite, respirar-halo 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes girar-halo { to { --angulo: 360deg; } }
+@keyframes respirar-halo {
+  0%, 100% { opacity: 0.42; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.04); }
+}
+
+/* ───────────────── Cartão (duas regiões) ───────────────── */
+.cartao {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  width: 692px;
+  min-height: 472px;
+  border-radius: var(--r-cartao);
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 30px 70px rgba(40, 16, 90, 0.22),
+    0 8px 24px rgba(40, 16, 90, 0.12);
+  overflow: hidden;
+  animation: cartao-entra var(--lento) var(--mola) both;
+}
+
+@keyframes cartao-entra {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ───────────────── Rail ───────────────── */
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 34px 22px 28px;
+  background: linear-gradient(180deg, var(--rail-1), var(--rail-2));
+  border-right: 1px solid var(--linha);
+}
+
+.orb-halo {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 6px 18px rgba(120, 50, 230, 0.32));
+  animation: orb-flutua 5.5s ease-in-out infinite;
+}
+
+@keyframes orb-flutua {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.orb {
+  width: 120px;
+  height: 120px;
+  display: block;
+  -webkit-app-region: drag;
+}
+
+/* Fallback do orb (só se WebGL falhar). */
+.orb-halo::before {
+  content: "";
+  position: absolute;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #d4b0ff, #8b4dff 46%, #3a1d8a 80%, transparent 86%);
+  opacity: 0;
+  transition: opacity var(--base) var(--saida);
+}
+body.sem-webgl .orb-halo::before { opacity: 1; }
+
+.marca-bloco {
+  text-align: center;
+}
+
+.marca {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+  color: var(--tinta);
+}
+
+.assinatura {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--tinta-suave);
+}
+
+/* Etapas verticais (wizard de verdade — clicáveis). */
+.passos {
+  width: 100%;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.passo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 9px 11px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--tinta-suave);
+  transition: background var(--rapido) var(--saida), color var(--rapido) var(--saida);
+}
+
+.passo:hover { background: rgba(139, 77, 255, 0.06); }
+
+.passo:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(139, 77, 255, 0.28);
+}
+
+.passo.ativo {
+  background: var(--branco);
+  color: var(--tinta);
+  box-shadow: 0 2px 8px rgba(40, 16, 90, 0.08), inset 0 0 0 1px var(--linha);
+}
+
+.num {
+  position: relative;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--tinta-fraca);
+  background: rgba(29, 23, 38, 0.06);
+  transition: all var(--rapido) var(--saida);
+}
+
+.passo.ativo .num {
+  color: #fff;
+  background: linear-gradient(135deg, var(--violeta), var(--violeta-forte));
+  box-shadow: 0 2px 8px rgba(120, 50, 230, 0.45);
+}
+
+.passo.feito .num {
+  color: transparent;
+  background: linear-gradient(135deg, var(--violeta), var(--violeta-forte));
+}
+
+/* Check desenhado (sem emoji/ícone). */
+.passo.feito .num::after {
+  content: "";
+  position: absolute;
+  width: 4.5px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
+}
+
+.passo-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.passo-titulo {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.passo-sub {
+  font-size: 11px;
+  color: var(--tinta-fraca);
+}
+
+/* ───────────────── Conteúdo ───────────────── */
+.conteudo {
+  position: relative;
+  padding: 30px 32px 26px;
+  display: flex;
+  flex-direction: column;
+}
+
+.painel {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.painel.ativo {
+  display: flex;
+  animation: painel-entra var(--base) var(--saida) both;
+}
+
+@keyframes painel-entra {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.painel-cabeca { display: flex; flex-direction: column; gap: 6px; }
+
+.titulo {
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+  line-height: 1.18;
+  color: var(--tinta);
+}
+
+.descricao {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--tinta-suave);
+  max-width: 44ch;
+}
+
+/* ───────────────── Captura de atalho ───────────────── */
+.captura {
+  position: relative;
+  width: 100%;
+  min-height: 80px;
+  border: 1.5px dashed var(--linha-forte);
+  border-radius: var(--r-md);
+  background: var(--papel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: border-color var(--base) var(--saida), background var(--base) var(--saida),
+    box-shadow var(--base) var(--saida), transform var(--rapido) var(--saida);
+}
+
+.captura:hover { border-color: var(--acento-borda); background: var(--acento-fundo); }
+
+.captura:focus-visible {
+  outline: none;
+  border-color: var(--acento-borda);
+  box-shadow: 0 0 0 4px rgba(139, 77, 255, 0.16);
+}
+
+.captura.capturando {
+  border-style: solid;
+  border-color: var(--acento-borda);
+  background: var(--acento-fundo);
+  box-shadow: 0 6px 22px rgba(139, 77, 255, 0.18);
+}
+
+.captura.definida {
+  border-style: solid;
+  border-color: var(--acento-borda);
+  background: linear-gradient(180deg, #fff, var(--acento-fundo));
+}
+
+.captura:active { transform: scale(0.992); }
+
+.kbd-grupo { display: flex; align-items: center; gap: 8px; }
+.captura.capturando .kbd-grupo { display: none; }
+
+.captura-aviso {
+  display: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--violeta-forte);
+  animation: piscar 1.3s ease-in-out infinite;
+}
+.captura.capturando .captura-aviso { display: inline; }
+
+@keyframes piscar { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Keycap tátil (claro, com relevo físico). */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 9px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tinta);
+  background: linear-gradient(180deg, #ffffff, #eef0f6);
+  border: 1px solid rgba(29, 23, 38, 0.12);
+  box-shadow:
+    0 2px 0 rgba(29, 23, 38, 0.12),
+    0 3px 6px rgba(29, 23, 38, 0.08),
+    inset 0 1px 0 #fff;
+}
+
+.kbd-mini {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  font-size: 12px;
+  border-radius: 6px;
+  margin: 0 1px;
+  vertical-align: middle;
+  box-shadow: 0 1px 0 rgba(29, 23, 38, 0.12), inset 0 1px 0 #fff;
+}
+
+.dica {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--tinta-fraca);
+}
+
+/* ───────────────── Opções (idioma / modelo) ───────────────── */
+.grade { display: grid; gap: 9px; }
+.grade-2 { grid-template-columns: 1fr 1fr; }
+
+.opcao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  cursor: pointer;
+  transition: background var(--rapido) var(--saida), border-color var(--rapido) var(--saida),
+    box-shadow var(--rapido) var(--saida), transform var(--rapido) var(--saida);
+}
+
+.opcao:hover {
+  border-color: var(--linha-forte);
+  box-shadow: 0 4px 14px rgba(40, 16, 90, 0.08);
+}
+
+.opcao:active { transform: scale(0.99); }
+
+.opcao.selecionada {
+  background: var(--acento-fundo);
+  border-color: var(--acento-borda);
+  box-shadow: 0 0 0 1px var(--acento-borda), 0 6px 18px rgba(139, 77, 255, 0.16);
+}
+
+.opcao input { position: absolute; opacity: 0; pointer-events: none; }
+
+.opcao:focus-within {
+  border-color: var(--acento-borda);
+  box-shadow: 0 0 0 4px rgba(139, 77, 255, 0.18);
+}
+
+.opcao-titulo { font-size: 14px; font-weight: 600; color: var(--tinta); }
+.opcao-sub { font-size: 12px; color: var(--tinta-suave); }
+
+.opcao-codigo {
+  align-self: flex-start;
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.3px;
+  color: var(--violeta-forte);
+  background: var(--acento-fundo);
+  border: 1px solid var(--acento-borda);
+  border-radius: 6px;
+  padding: 1px 7px;
+}
+
+/* Cartões de modelo */
+.opcao-modelo { gap: 4px; }
+
+.opcao-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.opcao-tag {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--tinta-fraca);
+  background: rgba(29, 23, 38, 0.05);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.opcao-tag.tag-ok {
+  color: var(--ok);
+  background: rgba(31, 157, 87, 0.1);
+}
+
+.medidor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.medidor-linha { display: flex; align-items: center; gap: 8px; }
+
+.medidor-rotulo { font-size: 10px; color: var(--tinta-fraca); width: 58px; }
+
+.pontos { display: inline-flex; gap: 4px; }
+
+.pontos i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(29, 23, 38, 0.13);
+}
+
+.pontos i.cheio {
+  background: linear-gradient(180deg, var(--violeta), var(--violeta-forte));
+}
+
+/* Nota de download (honesta, sob demanda) */
+.nota-download {
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  animation: painel-entra var(--rapido) var(--saida) both;
+}
+
+.nota-download p { font-size: 12px; color: var(--tinta-suave); margin-bottom: 8px; }
+
+.comando {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--violeta-forte);
+  background: var(--acento-fundo);
+  border: 1px solid var(--acento-borda);
+  border-radius: 8px;
+  padding: 9px 11px;
+  word-break: break-all;
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+
+/* ───────────────── Navegação ───────────────── */
+.nav {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.nav-espaco { flex: 1; }
+
+.btn {
+  padding: 9px 22px;
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--rapido) var(--saida), border-color var(--rapido) var(--saida),
+    box-shadow var(--rapido) var(--saida), transform var(--rapido) var(--saida), color var(--rapido) var(--saida);
+}
+
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(139, 77, 255, 0.22); }
+.btn:active { transform: scale(0.97); }
+
+.btn-secundario {
+  background: var(--branco);
+  border-color: var(--linha-forte);
+  color: var(--tinta-suave);
+}
+.btn-secundario:hover { background: var(--papel); color: var(--tinta); border-color: rgba(29, 23, 38, 0.2); }
+
+.btn-primario {
+  background: linear-gradient(135deg, var(--violeta), var(--violeta-forte));
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(106, 47, 224, 0.32);
+}
+.btn-primario:hover {
+  background: linear-gradient(135deg, #9a63ff, #7a3df0);
+  box-shadow: 0 8px 22px rgba(106, 47, 224, 0.42);
+}
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+.btn-concluir { padding-left: 26px; padding-right: 26px; }
+
+/* ───────────────── Movimento reduzido ───────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cartao, .halo, .orb-halo, .captura-aviso, .painel.ativo {
+    animation: none !important;
+  }
+  .btn, .opcao, .captura, .passo, .num { transition-duration: 1ms; }
+}

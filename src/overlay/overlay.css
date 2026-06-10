@@ -1,0 +1,311 @@
+/* overlay.css — estilos do overlay do MestreWrite (ROXO, cantos quadrados).
+   Tudo sobre fundo 100% transparente (estética Apple Intelligence — ver
+   docs/Design.md). A borda é um anel cônico roxo animado (cantos quadrados);
+   o orb é um redemoinho roxo desenhado em Canvas, bem desfocado para o ar
+   etéreo (ver orb.js). As DIMENSÕES vêm de orb.js em variáveis CSS,
+   proporcionais à tela. Estados via classe no <body>. */
+
+/* Ângulo animável da borda cônica (precisa de @property p/ interpolar). */
+@property --angulo {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+:root {
+  /* Valores-base (fallback); pilula.js sobrescreve conforme o tamanho da tela. */
+  --glow-w: 40px; /* largura do glow da borda (desbota p/ dentro a partir da beira) */
+  --raio-tela: 0px; /* usado pelo .bloom; a borda não usa mais raio fixo */
+  --flutua: 8px; /* amplitude da flutuação do orb (legado) */
+  --orb-blur: 12px; /* desfoque do orb (legado) */
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent; /* fundo 100% transparente */
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+/* ───────────────── Borda: glow Apple-Intelligence nas beiras ───────────────
+   O conic-gradient cobre a tela inteira; a MÁSCARA revela só uma faixa que
+   desbota para dentro a partir de CADA beira (união das 4 camadas). Não há anel
+   de raio fixo: a faixa cobre todo o canto e o arredondamento FÍSICO do display
+   recorta — encaixa em qualquer Mac sem precisar do raio. Cores fluem (drift +
+   oscilação de matiz + respiração). --glow-w = largura do glow (pilula.js). */
+.borda {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  /* Espectro vibrante (azul→violeta→magenta→rosa, simétrico p/ loop sem emenda). */
+  background: conic-gradient(
+    from var(--angulo),
+    #5e7cff,
+    #8b5cf6,
+    #c64bff,
+    #ff5fb0,
+    #ff7ad9,
+    #ff5fb0,
+    #c64bff,
+    #8b5cf6,
+    #5e7cff
+  );
+
+  -webkit-mask:
+    linear-gradient(to right, #000, transparent var(--glow-w)),
+    linear-gradient(to left, #000, transparent var(--glow-w)),
+    linear-gradient(to bottom, #000, transparent var(--glow-w)),
+    linear-gradient(to top, #000, transparent var(--glow-w));
+  -webkit-mask-composite: source-over;
+  mask:
+    linear-gradient(to right, #000, transparent var(--glow-w)),
+    linear-gradient(to left, #000, transparent var(--glow-w)),
+    linear-gradient(to bottom, #000, transparent var(--glow-w)),
+    linear-gradient(to top, #000, transparent var(--glow-w));
+  mask-composite: add;
+
+  filter: blur(13px); /* glow macio; a respiração assume ao animar */
+  opacity: 0; /* idle: invisível */
+  transition: opacity 0.5s ease;
+  animation: girar-borda 9s linear infinite,
+    respirar-borda 5s ease-in-out infinite;
+  will-change: opacity, filter;
+}
+
+@keyframes girar-borda {
+  to {
+    --angulo: 360deg;
+  }
+}
+
+@keyframes respirar-borda {
+  0%,
+  100% {
+    filter: blur(12px) brightness(0.95) hue-rotate(-12deg);
+  }
+  50% {
+    filter: blur(20px) brightness(1.25) hue-rotate(14deg);
+  }
+}
+
+/* ───────────────── Orb (redemoinho roxo) ─────────────────
+   Largura/altura/posição são definidas por orb.js (inline) conforme a tela. */
+.orb-wrap {
+  position: fixed;
+  left: 50%;
+  bottom: 120px; /* fallback; orb.js ajusta proporcional à tela */
+  width: 220px; /* fallback */
+  height: 220px; /* fallback */
+  margin-left: -110px; /* fallback (centraliza) */
+  z-index: 2;
+  pointer-events: none;
+
+  opacity: 0; /* idle: escondido */
+  transform: scale(0.55);
+  transform-origin: center;
+  /* aparição com leve "overshoot" elástico (mais natural que linear) */
+  transition: opacity 0.3s ease,
+    transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+/* Desfoque leve + máscara radial suave = ar etéreo. O shader WebGL já tem
+   bordas/alpha suaves (extractAlpha + smoothstep), então a máscara só apaga o
+   extremo da beira e o blur é discreto (ver --orb-blur em orb.js). */
+.orb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: blur(var(--orb-blur, 4px));
+  -webkit-mask: radial-gradient(closest-side, #000 72%, transparent 100%);
+  mask: radial-gradient(closest-side, #000 72%, transparent 100%);
+  animation: flutuar 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes flutuar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-1 * var(--flutua)));
+  }
+}
+
+/* ───────────────── Estados ───────────────── */
+
+/* listening: borda calma e orb presente. */
+body.estado-listening .borda {
+  opacity: 0.9;
+}
+body.estado-listening .orb-wrap {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* processing: borda mais intensa; drift e respiração mais ágeis. */
+body.estado-processing .borda {
+  opacity: 0.98;
+  animation-duration: 5s, 2.6s; /* girar-borda, respirar-borda */
+}
+body.estado-processing .orb-wrap {
+  opacity: 1;
+  transform: scale(1.08);
+}
+body.estado-processing .orb {
+  animation-duration: 3s; /* flutuação mais rápida */
+}
+
+/* ───────────────── Pílula de voz (waveform + dot) ─────────────────
+   Indicador compacto estilo "dynamic island": cápsula escura translúcida com
+   uma dot de status do MestreWrite e barras de áudio (waveform) que reagem ao
+   estado. Posição vem de pilula.js; alturas das barras são animadas lá. */
+.pilula {
+  position: fixed;
+  left: 50%;
+  bottom: 96px; /* fallback; pilula.js ajusta proporcional à tela */
+  z-index: 3;
+  pointer-events: none;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 50px;
+  padding: 0 19px;
+  box-sizing: border-box;
+
+  border-radius: 999px;
+  /* Cápsula BRANCA (frosted) com glow violeta — estética Apple Intelligence. */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(245, 240, 255, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 14px 36px rgba(40, 10, 80, 0.24),
+    0 0 26px rgba(160, 90, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  opacity: 0; /* idle: escondida */
+  transform: translateX(-50%) translateY(14px) scale(0.8);
+  transform-origin: center bottom;
+  transition: opacity 0.32s ease,
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.5, 1); /* overshoot elástico */
+  will-change: opacity, transform;
+}
+
+/* Orb de status: mini-orb WebGL iridescente (orb-core.js) à esquerda das barras.
+   O glow usa drop-shadow (segue o alfa circular do orb, não a caixa quadrada). */
+.orb-mini {
+  flex: 0 0 auto;
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 7px rgba(150, 80, 255, 0.7));
+}
+
+/* Trilha das barras (waveform). drop-shadow dá um leve neon violeta. */
+.ondas {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  filter: drop-shadow(0 0 3px rgba(140, 80, 240, 0.45));
+}
+
+/* Cada barra: altura cheia, escalada em Y por pilula.js (origem no centro). */
+.onda {
+  width: 3px;
+  height: 100%;
+  border-radius: 999px;
+  /* Violeta mais saturado p/ contrastar na cápsula branca. */
+  background: linear-gradient(to top, #6a2fe0, #9b4dff 55%, #c06bff);
+  transform: scaleY(0.16);
+  transform-origin: center;
+}
+
+/* Pílula visível em listening e processing, com glow violeta que respira. */
+body.estado-listening .pilula,
+body.estado-processing .pilula {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+  animation: respirar-pilula 3.6s ease-in-out infinite;
+}
+body.estado-processing .pilula {
+  transform: translateX(-50%) translateY(0) scale(1.04);
+  animation-duration: 1.9s;
+}
+
+/* Respiração do halo (box-shadow) — não mexe no transform, sem conflito. */
+@keyframes respirar-pilula {
+  0%,
+  100% {
+    box-shadow: 0 14px 36px rgba(40, 10, 80, 0.24),
+      0 0 24px rgba(160, 90, 255, 0.26),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+  50% {
+    box-shadow: 0 16px 42px rgba(40, 10, 80, 0.28),
+      0 0 42px rgba(175, 105, 255, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* Pulso do glow do orb: calmo em listening, ágil em processing (a textura
+   iridescente já é animada pelo shader; isto só "respira" o brilho ao redor). */
+@keyframes pulsar-orb {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(150, 80, 255, 0.55));
+  }
+  50% {
+    filter: drop-shadow(0 0 13px rgba(180, 110, 255, 0.9));
+  }
+}
+body.estado-listening .orb-mini {
+  animation: pulsar-orb 2.4s ease-in-out infinite;
+}
+body.estado-processing .orb-mini {
+  animation: pulsar-orb 1.1s ease-in-out infinite;
+}
+
+/* ───────────────── Bloom de ativação (cinemático, estilo Apple Intelligence) ──
+   Flare de luz que floresce nas bordas quando o overlay é ativado pelo atalho.
+   Elemento próprio (independente da .borda) p/ não brigar com as animações dela.
+   pilula.js adiciona body.ativando por ~1.3s a cada ativação (idle → ativo). */
+.bloom {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: var(--raio-tela, 90px);
+  opacity: 0;
+  box-shadow: inset 0 0 0 0 rgba(190, 120, 255, 0);
+  will-change: opacity, box-shadow;
+}
+body.ativando .bloom {
+  animation: bloom-ativacao 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes bloom-ativacao {
+  0% {
+    opacity: 0;
+    box-shadow: inset 0 0 0 0 rgba(190, 120, 255, 0),
+      inset 0 0 0 0 rgba(120, 80, 255, 0);
+  }
+  22% {
+    opacity: 1;
+    box-shadow: inset 0 0 170px 12px rgba(200, 130, 255, 0.6),
+      inset 0 0 70px 0 rgba(120, 90, 255, 0.5);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: inset 0 0 250px 70px rgba(200, 130, 255, 0),
+      inset 0 0 110px 0 rgba(120, 90, 255, 0);
+  }
+}

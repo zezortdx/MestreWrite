@@ -1,0 +1,62 @@
+# Stack Técnico
+
+As tecnologias do MestreWrite, com as decisões e trade-offs por trás de cada uma.
+Decisões formais estão registradas como ADRs em [[ADR-001-electron]],
+[[ADR-002-whisper-local]] e [[ADR-003-inserção-via-clipboard]].
+
+## ⚛️ Electron
+Framework para o app desktop. Permite usar web (HTML/CSS/JS) para o overlay e
+Node para a lógica de sistema, com um caminho claro para macOS, Windows e Linux.
+
+- **Prós:** multiplataforma, ecossistema enorme, ideal para o overlay animado, APIs de atalho global e tray prontas.
+- **Contras:** consumo de memória maior, bundle pesado.
+- Decisão: [[ADR-001-electron]].
+
+## 🟩 Node.js
+Runtime da lógica do processo principal: orquestra gravação, chamada ao whisper e
+inserção de texto. Já vem com o Electron.
+
+## 🧠 whisper.cpp
+Implementação em C/C++ do modelo Whisper de transcrição, rodando **localmente**.
+É o coração da [[Privacidade]] e do funcionamento offline.
+
+- **Prós:** local, offline, rápido em CPU/Metal, qualidade alta, sem custo por uso.
+- **Contras:** binário/modelo precisam ser instalados; modelos grandes ocupam espaço.
+- Decisão: [[ADR-002-whisper-local]].
+
+## 🔊 sox
+Utilitário de linha de comando para capturar áudio do microfone no MVP, invocado
+como child process via `src/main/audio.js`.
+
+- **Prós:** simples, confiável, fácil de chamar via shell, disponível no Homebrew.
+- **Contras:** dependência externa; substituível por captura nativa no futuro.
+
+## 📦 Módulos do backend (novos nesta fase)
+- **`src/main/config.js`** — configuração centralizada (atalho, idioma, caminho do modelo).
+- **`src/main/audio.js`** — gravação via `sox` com promessa de ciclo único.
+- **`src/main/transcribe.js`** — transcrição via `whisper-cli`, limpeza de arquivos temporários.
+- **`src/main/typer.js`** — inserção via clipboard + `osascript` com stdin (sem shell).
+
+## 🧠 Máquina de estados (`src/main/main.js`)
+IDLE → RECORDING → TRANSCRIBING → IDLE. Atalho ignorado durante TRANSCRIBING.
+Tray icon com tooltip dinâmico e menu "Sair". Detalhes em [[ADR-006-backend-core]].
+
+## 🎨 WebGL + CSS + Web Audio (overlay)
+O orb é um **shader iridescente em WebGL puro** (`orb-core.js`), renderizado numa
+**pílula** com waveform (`pilula.js`); a borda é um **glow em CSS** (`conic-gradient`
++ `@property` + máscara que desbota das beiras); o som de ativação é **sintetizado
+em Web Audio** (sem arquivo). Tudo **sem bibliotecas extras** — só web nativa,
+respeitando a CSP estrita. Histórico em [[ADR-004-overlay-visual]] (v1, Canvas 2D)
+e decisões atuais em [[ADR-005-overlay-pilula-webgl]] (v2).
+
+## Trade-offs gerais
+
+| Tema | Escolha | Em troca de |
+|------|---------|-------------|
+| Privacidade vs. conveniência | Tudo local | Setup inicial (instalar whisper-cpp/sox) |
+| Velocidade de desenvolvimento vs. peso | Electron | App mais leve (nativo) |
+| Simplicidade vs. robustez | `sox` + clipboard no MVP | Solução nativa de áudio/inserção |
+
+## Relacionado
+
+- [[Arquitetura]] · [[MVP]] · [[Roadmap]] · [[Privacidade]] · [[ADR-006-backend-core]]

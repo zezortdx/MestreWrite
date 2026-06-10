@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- CSP estrita: nada remoto. orb-core.js mora em ../overlay mas é o mesmo
+         origin file:// → 'self' cobre. Sem inline script/style. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:;"
+    />
+    <title>MestreWrite — Configuração inicial</title>
+    <link rel="stylesheet" href="setup.css" />
+  </head>
+  <body>
+    <div class="palco">
+      <!-- Halo colorido suave atrás do cartão (assinatura ligada ao orb/glow). -->
+      <div class="halo" aria-hidden="true"></div>
+
+      <section class="cartao" aria-label="Configuração inicial do MestreWrite">
+        <!-- ── Rail: orb herói + identidade + etapas verticais (arrastável) ── -->
+        <aside class="rail regiao-arrasta">
+          <div class="orb-halo" aria-hidden="true">
+            <canvas class="orb" width="120" height="120"></canvas>
+          </div>
+
+          <div class="marca-bloco">
+            <h1 class="marca">MestreWrite</h1>
+            <p class="assinatura">Sua voz vira texto, no seu Mac.</p>
+          </div>
+
+          <nav class="passos regiao-nao-arrasta" aria-label="Etapas da configuração">
+            <button class="passo ativo" type="button" data-ir="1">
+              <span class="num">1</span>
+              <span class="passo-texto">
+                <span class="passo-titulo">Atalho</span>
+                <span class="passo-sub">Como chamar</span>
+              </span>
+            </button>
+            <button class="passo" type="button" data-ir="2">
+              <span class="num">2</span>
+              <span class="passo-texto">
+                <span class="passo-titulo">Idioma</span>
+                <span class="passo-sub">Sua fala</span>
+              </span>
+            </button>
+            <button class="passo" type="button" data-ir="3">
+              <span class="num">3</span>
+              <span class="passo-texto">
+                <span class="passo-titulo">Modelo</span>
+                <span class="passo-sub">Precisão</span>
+              </span>
+            </button>
+          </nav>
+        </aside>
+
+        <!-- ── Conteúdo branco ── -->
+        <div class="conteudo">
+          <!-- Passo 1 — Atalho -->
+          <section class="painel ativo" id="painel-1" aria-labelledby="titulo-1">
+            <header class="painel-cabeca">
+              <h2 class="titulo" id="titulo-1">Como você chama o MestreWrite</h2>
+              <p class="descricao">
+                Escolha um atalho. Pressione-o em qualquer aplicativo para começar a
+                ditar — e de novo para parar.
+              </p>
+            </header>
+
+            <button class="captura regiao-nao-arrasta" id="captura" type="button"
+                    aria-label="Definir atalho. Clique e pressione a combinação de teclas.">
+              <span class="kbd-grupo" id="kbdGrupo"></span>
+              <span class="captura-aviso" id="capturaAviso">Pressione as teclas…</span>
+            </button>
+
+            <p class="dica">
+              Clique e pressione a combinação. Use ao menos um modificador
+              <span class="kbd kbd-mini">⌘</span><span class="kbd kbd-mini">⌥</span><span class="kbd kbd-mini">⌃</span><span class="kbd kbd-mini">⇧</span>.
+            </p>
+
+            <div class="nav regiao-nao-arrasta">
+              <span class="nav-espaco"></span>
+              <button class="btn btn-primario" id="btnProximo1" type="button">Continuar</button>
+            </div>
+          </section>
+
+          <!-- Passo 2 — Idioma -->
+          <section class="painel" id="painel-2" aria-labelledby="titulo-2">
+            <header class="painel-cabeca">
+              <h2 class="titulo" id="titulo-2">Idioma da sua fala</h2>
+              <p class="descricao">O MestreWrite transcreve neste idioma.</p>
+            </header>
+
+            <div class="grade grade-2" id="opcoesIdioma" role="radiogroup" aria-label="Idioma">
+              <label class="opcao selecionada">
+                <input type="radio" name="idioma" value="pt" checked />
+                <span class="opcao-titulo">Português</span>
+                <span class="opcao-sub">Brasil</span>
+                <span class="opcao-codigo">pt-BR</span>
+              </label>
+              <label class="opcao">
+                <input type="radio" name="idioma" value="en" />
+                <span class="opcao-titulo">English</span>
+                <span class="opcao-sub">United States</span>
+                <span class="opcao-codigo">en-US</span>
+              </label>
+              <label class="opcao">
+                <input type="radio" name="idioma" value="es" />
+                <span class="opcao-titulo">Español</span>
+                <span class="opcao-sub">España</span>
+                <span class="opcao-codigo">es-ES</span>
+              </label>
+              <label class="opcao">
+                <input type="radio" name="idioma" value="fr" />
+                <span class="opcao-titulo">Français</span>
+                <span class="opcao-sub">France</span>
+                <span class="opcao-codigo">fr-FR</span>
+              </label>
+              <label class="opcao">
+                <input type="radio" name="idioma" value="de" />
+                <span class="opcao-titulo">Deutsch</span>
+                <span class="opcao-sub">Deutschland</span>
+                <span class="opcao-codigo">de-DE</span>
+              </label>
+              <label class="opcao">
+                <input type="radio" name="idioma" value="it" />
+                <span class="opcao-titulo">Italiano</span>
+                <span class="opcao-sub">Italia</span>
+                <span class="opcao-codigo">it-IT</span>
+              </label>
+            </div>
+
+            <div class="nav regiao-nao-arrasta">
+              <button class="btn btn-secundario" id="btnVoltar2" type="button">Voltar</button>
+              <button class="btn btn-primario" id="btnProximo2" type="button">Continuar</button>
+            </div>
+          </section>
+
+          <!-- Passo 3 — Modelo -->
+          <section class="painel" id="painel-3" aria-labelledby="titulo-3">
+            <header class="painel-cabeca">
+              <h2 class="titulo" id="titulo-3">Modelo de transcrição</h2>
+              <p class="descricao">Equilibra velocidade e precisão. Dá para trocar depois.</p>
+            </header>
+
+            <div class="grade grade-2" id="opcoesModelo" role="radiogroup" aria-label="Modelo">
+              <label class="opcao opcao-modelo">
+                <input type="radio" name="modelo" value="tiny" data-instalado="false" />
+                <span class="opcao-topo">
+                  <span class="opcao-titulo">Tiny</span>
+                  <span class="opcao-tag">Requer download</span>
+                </span>
+                <span class="opcao-sub">75 MB · mais rápido</span>
+                <span class="medidor" data-vel="4" data-prec="1" aria-hidden="true">
+                  <span class="medidor-linha"><span class="medidor-rotulo">Velocidade</span><span class="pontos pontos-vel"></span></span>
+                  <span class="medidor-linha"><span class="medidor-rotulo">Precisão</span><span class="pontos pontos-prec"></span></span>
+                </span>
+              </label>
+              <label class="opcao opcao-modelo selecionada">
+                <input type="radio" name="modelo" value="base" data-instalado="true" checked />
+                <span class="opcao-topo">
+                  <span class="opcao-titulo">Base</span>
+                  <span class="opcao-tag tag-ok">Instalado</span>
+                </span>
+                <span class="opcao-sub">147 MB · equilíbrio</span>
+                <span class="medidor" data-vel="3" data-prec="2" aria-hidden="true">
+                  <span class="medidor-linha"><span class="medidor-rotulo">Velocidade</span><span class="pontos pontos-vel"></span></span>
+                  <span class="medidor-linha"><span class="medidor-rotulo">Precisão</span><span class="pontos pontos-prec"></span></span>
+                </span>
+              </label>
+              <label class="opcao opcao-modelo">
+                <input type="radio" name="modelo" value="small" data-instalado="false" />
+                <span class="opcao-topo">
+                  <span class="opcao-titulo">Small</span>
+                  <span class="opcao-tag">Requer download</span>
+                </span>
+                <span class="opcao-sub">466 MB · mais preciso</span>
+                <span class="medidor" data-vel="2" data-prec="3" aria-hidden="true">
+                  <span class="medidor-linha"><span class="medidor-rotulo">Velocidade</span><span class="pontos pontos-vel"></span></span>
+                  <span class="medidor-linha"><span class="medidor-rotulo">Precisão</span><span class="pontos pontos-prec"></span></span>
+                </span>
+              </label>
+              <label class="opcao opcao-modelo">
+                <input type="radio" name="modelo" value="medium" data-instalado="false" />
+                <span class="opcao-topo">
+                  <span class="opcao-titulo">Medium</span>
+                  <span class="opcao-tag">Requer download</span>
+                </span>
+                <span class="opcao-sub">1.5 GB · alta precisão</span>
+                <span class="medidor" data-vel="1" data-prec="4" aria-hidden="true">
+                  <span class="medidor-linha"><span class="medidor-rotulo">Velocidade</span><span class="pontos pontos-vel"></span></span>
+                  <span class="medidor-linha"><span class="medidor-rotulo">Precisão</span><span class="pontos pontos-prec"></span></span>
+                </span>
+              </label>
+            </div>
+
+            <div class="nota-download" id="notaDownload" hidden>
+              <p>Baixe este modelo antes de usar — copie o comando:</p>
+              <code class="comando" id="comandoDownload"></code>
+            </div>
+
+            <div class="nav regiao-nao-arrasta">
+              <button class="btn btn-secundario" id="btnVoltar3" type="button">Voltar</button>
+              <button class="btn btn-primario btn-concluir" id="btnConcluir" type="button">Concluir e iniciar</button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <script src="../overlay/orb-core.js"></script>
+    <script src="setup.js"></script>
+  </body>
+</html>

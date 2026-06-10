@@ -1,0 +1,72 @@
+{
+  "name": "mestrewrite",
+  "version": "0.1.0",
+  "description": "Assistente de escrita por voz, local e offline, para desktop. Transforma fala em texto inteligente em qualquer aplicativo.",
+  "license": "MIT",
+  "private": true,
+  "author": "Pedro Júlio Cabral Neto <pedrojuliocabralneto@gmail.com>",
+  "homepage": "https://github.com/pedrojuliocabralneto/mestrewrite",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedrojuliocabralneto/mestrewrite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pedrojuliocabralneto/mestrewrite/issues"
+  },
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "icone": "electron scripts/gerar-icone.js && bash scripts/gerar-icns.sh",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --mac",
+    "lint": "echo \"[placeholder] Lint ainda não configurado\" && exit 0"
+  },
+  "keywords": [
+    "voz",
+    "transcrição",
+    "whisper",
+    "electron",
+    "offline",
+    "escrita",
+    "ditado",
+    "speech-to-text"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "electron": "^42.3.3",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.mestrewrite.app",
+    "productName": "MestreWrite",
+    "copyright": "Copyright © 2026 Pedro Júlio Cabral Neto",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build-assets"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build-assets/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "identity": null,
+      "hardenedRuntime": false,
+      "extendInfo": {
+        "LSUIElement": true,
+        "NSMicrophoneUsageDescription": "O MestreWrite usa o microfone para transcrever sua fala localmente, no seu Mac."
+      }
+    },
+    "dmg": {
+      "title": "MestreWrite ${version}"
+    }
+  }
+}

@@ -16,11 +16,11 @@ Atalho global (Cmd+Shift+Space)
 └───────┬──────────┘
         │
         ▼
-┌──────────────────┐     sox -d -r 16000 -c 1 -b 16
+┌──────────────────┐     sox … highpass 80 silence … (VAD)
 │  RECORDING       │ ───→  arquivo .wav em os.tmpdir()
-│  overlay listening│     (16kHz mono 16-bit)
+│  overlay listening│     (16kHz mono 16-bit; corta silêncio)
 └───────┬──────────┘
-        │ toggle atalho → SIGTERM
+        │ silêncio detectado (sox encerra) · ou toggle · ou trava 30s
         ▼
 ┌──────────────────┐     whisper-cli -m modelo -f .wav -l pt
 │  TRANSCRIBING    │ ───→  texto
@@ -44,13 +44,16 @@ Atalho global (Cmd+Shift+Space)
 e menu "Sair". Indispensável pois o dock fica oculto.
 
 ### 2. ⌨️ Atalho global ✅ `src/main/main.js`
-`Cmd+Shift+Space` registrado via `globalShortcut`. Inicia gravação (IDLE → RECORDING)
-e para (RECORDING → TRANSCRIBING). Ignorado em TRANSCRIBING para evitar corrida.
+`Cmd+Shift+Space` registrado via `globalShortcut`. Inicia gravação (IDLE → RECORDING).
+A parada é **automática por silêncio** (o sox encerra sozinho); o atalho de novo
+força a parada. Ignorado em TRANSCRIBING para evitar corrida. Ver
+[[ADR-009-vad-silencio-e-otimizacao]].
 
 ### 3. 🎙️ Gravação de áudio ✅ `src/main/audio.js`
-Spawna `sox -d -r 16000 -c 1 -b 16 <arquivo.wav>` como child process.
-Arquivo único em `os.tmpdir()` com timestamp. Para com SIGTERM + await 'close'.
-Erro: `Notification` se `sox` não instalado.
+Spawna `sox -d -r 16000 -c 1 -b 16 <wav> highpass 80 silence …` como child process
+(**VAD nativo**: corta o silêncio inicial e encerra após ~1,8 s de silêncio).
+Arquivo único em `os.tmpdir()`; resolve no `close` (silêncio ou SIGTERM). Trava de
+tempo de 30 s. Erro: `Notification` se `sox` não instalado. Ver [[ADR-009-vad-silencio-e-otimizacao]].
 
 ### 4. 🧠 Transcrição com whisper.cpp ✅ `src/main/transcribe.js`
 Spawna `whisper-cli -m <modelo> -f <wav> -l pt -nt --output-txt -of <base>`.

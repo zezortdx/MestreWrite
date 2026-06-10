@@ -62,12 +62,17 @@ O app **precisa** de duas permissões — sem elas grava/cola falham com `Notifi
 > Num `.app` empacotado/assinado, aparecerão como **“MestreWrite”**.
 
 ## 5. ⌨️ Usar
-1. **`Cmd+Shift+Space`** → começa a gravar (overlay: pílula + som + glow).
+1. **`Cmd+Shift+Space`** → começa a escutar (overlay: pílula + som + glow).
 2. Fale.
-3. **`Cmd+Shift+Space`** de novo → para, transcreve (overlay: *processing*) e **cola
-   o texto** no app em foco.
+3. **Pare de falar** → ao detectar ~1,8 s de silêncio, o app **encerra sozinho**
+   (VAD nativo do `sox`), transcreve (*processing*) e **cola o texto** no app em
+   foco. (Apertar `Cmd+Shift+Space` de novo força a parada na hora.)
 4. **Sair:** ícone roxo no tray (barra de menus) → **Sair**. (Não há dock nem
    atalho de quit — o tray é a saída.)
+
+> 🎚️ **Ajuste do silêncio** (em `~/.mestrewrite/config.json`): `silencioDuracao`
+> (s p/ parar), `silencioLimiar` (% — menor = mais sensível), `autoParar`
+> (`false` volta ao modo só-manual). Ver [[ADR-009-vad-silencio-e-otimizacao]].
 
 ## 🛠️ Problemas comuns
 | Sintoma | Causa / solução |

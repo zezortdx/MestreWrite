@@ -29,7 +29,10 @@ Utilitário de linha de comando para capturar áudio do microfone no MVP, invoca
 como child process via `src/main/audio.js`.
 
 - **Prós:** simples, confiável, fácil de chamar via shell, disponível no Homebrew.
+  Traz **VAD nativo** (efeito `silence`) e filtros (`highpass`) sem libs extras.
 - **Contras:** dependência externa; substituível por captura nativa no futuro.
+- **VAD:** o efeito `silence` corta o silêncio inicial e **encerra a gravação no
+  silêncio** — o whisper recebe só a fala (menos alucinação). Ver [[ADR-009-vad-silencio-e-otimizacao]].
 
 ## 📦 Módulos do backend (novos nesta fase)
 - **`src/main/config.js`** — configuração centralizada (atalho, idioma, caminho do modelo).

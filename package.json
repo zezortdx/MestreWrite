@@ -43,6 +43,12 @@
     "appId": "com.mestrewrite.app",
     "productName": "MestreWrite",
     "copyright": "Copyright © 2026 Pedro Júlio Cabral Neto",
+    "compression": "maximum",
+    "electronLanguages": [
+      "en",
+      "pt",
+      "pt_BR"
+    ],
     "directories": {
       "output": "dist",
       "buildResources": "build-assets"

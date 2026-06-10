@@ -18,6 +18,7 @@ Direção do MestreWrite, em fases. Cada fase entrega valor sozinha.
 - [x] Configuração centralizada — `src/main/config.js`.
 - [x] Setup de primeira execução (atalho/idioma/modelo) — `src/setup/` ([[ADR-007-setup-primeira-execucao]]).
 - [x] Empacotamento `.dmg`/`.zip` + ícone do orb — `electron-builder` ([[ADR-008-empacotamento-electron-builder]]).
+- [x] Parada automática por silêncio (VAD) + otimizações de velocidade/peso ([[ADR-009-vad-silencio-e-otimizacao]]).
 
 Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA de correção).
 

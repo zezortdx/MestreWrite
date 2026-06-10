@@ -1,11 +1,21 @@
 // audio.js — captura de áudio do microfone via sox.
 // Invoca sox como child process, salva WAV em diretório temporário.
 // 16kHz mono 16-bit = formato que o whisper.cpp espera.
+//
+// VAD nativo: o efeito `silence` do sox corta o silêncio inicial (espera a fala)
+// e ENCERRA a gravação sozinho após um período de silêncio — então o whisper só
+// recebe a fala (sem silêncio/ruído nas pontas, onde ele costuma alucinar).
+// Um `highpass` leve remove ruído de baixa frequência antes da detecção.
 
 const { spawn } = require('child_process');
 const path = require('path');
 const os = require('os');
-const { SOX_BIN } = require('./config');
+const {
+  SOX_BIN,
+  AUTO_PARAR,
+  SILENCIO_LIMIAR,
+  SILENCIO_DURACAO,
+} = require('./config');
 
 let processoGravacao = null;
 let caminhoWav = null;
@@ -23,8 +33,14 @@ function iniciarGravacao() {
     const nome = `mestrewrite_${Date.now()}.wav`;
     caminhoWav = path.join(os.tmpdir(), nome);
 
-    // sox -d -r 16000 -c 1 -b 16 <arquivo.wav>
-    const args = ['-d', '-r', '16000', '-c', '1', '-b', '16', caminhoWav];
+    // sox -d -r 16000 -c 1 -b 16 <arquivo.wav> [efeitos]
+    const args = ['-d', '-r', '16000', '-c', '1', '-b', '16', caminhoWav, 'highpass', '80'];
+    if (AUTO_PARAR) {
+      const limiar = `${SILENCIO_LIMIAR}%`;
+      // silence 1 0.1 L  → começa ao detectar fala (corta silêncio inicial)
+      // 1 <dur> L        → encerra após <dur>s de silêncio contínuo
+      args.push('silence', '1', '0.1', limiar, '1', String(SILENCIO_DURACAO), limiar);
+    }
     processoGravacao = spawn(SOX_BIN, args, { stdio: 'ignore' });
 
     let erroInicial = null;

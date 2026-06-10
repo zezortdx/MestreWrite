@@ -41,7 +41,7 @@ function abrirSetup() {
 }
 
 // ── Módulos de negócio (carregados só após setup confirmar que config existe) ─
-const { TECLA_ATALHO, PATH_MODELO } = require('./config');
+const { TECLA_ATALHO, PATH_MODELO, DURACAO_MAX } = require('./config');
 const { iniciarGravacao, pararGravacao } = require('./audio');
 const { transcrever, modeloExiste, caminhoModelo } = require('./transcribe');
 const { inserirTexto } = require('./typer');
@@ -161,7 +161,10 @@ function enviarEstadoOverlay(estadoVisual) {
 }
 
 // ── Fluxo ────────────────────────────────────────────────────────────────────
-let ultimoWav = null;
+// O sox encerra a gravação SOZINHO ao detectar silêncio (VAD nativo — ver
+// audio.js). Também dá para parar manualmente apertando o atalho de novo. Em
+// ambos os casos a transcrição dispara automaticamente.
+let timeoutMax = null;
 
 function toggleGravacao() {
   if (estado === ESTADO.IDLE) {
@@ -174,8 +177,10 @@ function toggleGravacao() {
     }
     iniciar();
   } else if (estado === ESTADO.RECORDING) {
-    finalizar();
+    // Parada manual = override do auto-stop por silêncio.
+    pararGravacao();
   }
+  // TRANSCRIBING: ignora (evita corrida).
 }
 
 async function iniciar() {
@@ -183,27 +188,32 @@ async function iniciar() {
   enviarEstadoOverlay('listening');
   if (atualizarTooltipTray) atualizarTooltipTray('Gravando…');
 
+  // Trava de segurança: encerra se exceder o tempo máximo (ex.: nada falado).
+  clearTimeout(timeoutMax);
+  timeoutMax = setTimeout(pararGravacao, DURACAO_MAX * 1000);
+
+  let wav = null;
   try {
-    ultimoWav = await iniciarGravacao();
+    // Resolve quando o sox fecha: por silêncio detectado OU parada manual.
+    wav = await iniciarGravacao();
   } catch (err) {
-    ultimoWav = null;
+    clearTimeout(timeoutMax);
     voltarAoIdle();
     if (atualizarTooltipTray) atualizarTooltipTray('Pronto');
-
     if (err.code === 'ENOENT') {
       notificar('MestreWrite — sox não encontrado', 'Instale com: brew install sox');
     } else {
       notificar('MestreWrite — Erro na gravação', err.message);
     }
+    return;
   }
+
+  clearTimeout(timeoutMax);
+  await processar(wav);
 }
 
-async function finalizar() {
-  if (estado !== ESTADO.RECORDING) return;
-
-  await pararGravacao();
-
-  if (!ultimoWav) {
+async function processar(wav) {
+  if (!wav) {
     voltarAoIdle();
     if (atualizarTooltipTray) atualizarTooltipTray('Pronto');
     return;
@@ -214,18 +224,13 @@ async function finalizar() {
   if (atualizarTooltipTray) atualizarTooltipTray('Transcrevendo…');
 
   try {
-    const texto = await transcrever(ultimoWav);
-    ultimoWav = null;
-
+    const texto = await transcrever(wav);
     await inserirTexto(texto);
-
     voltarAoIdle();
     if (atualizarTooltipTray) atualizarTooltipTray('Pronto');
   } catch (err) {
-    ultimoWav = null;
     voltarAoIdle();
     if (atualizarTooltipTray) atualizarTooltipTray('Pronto');
-
     if (err.code === 'ENOENT') {
       notificar('MestreWrite — whisper-cli não encontrado', 'Instale com: brew install whisper-cpp');
     } else {

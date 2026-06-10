@@ -9,10 +9,16 @@ const DEFAULTS = {
   atalho: 'CmdOrCtrl+Shift+Space',
   idioma: 'pt',
   modelo: 'base',
-  threads: Math.min(4, os.cpus().length || 4),
+  // Aproveita os núcleos de performance (Apple Silicon costuma ter 4–8).
+  threads: Math.min(8, os.cpus().length || 4),
   flashAttn: true,
   noFallback: true,
   suprimirNst: true,
+  // Parada automática por silêncio (VAD nativo do sox — ver audio.js).
+  autoParar: true,
+  silencioLimiar: 2, // % do volume tido como "silêncio"
+  silencioDuracao: 1.8, // s de silêncio contínuo p/ encerrar a fala
+  duracaoMax: 30, // s — trava de segurança (força a parada)
 };
 
 function garantirDiretorio() {

@@ -15,6 +15,10 @@ module.exports = {
   FLASH_ATTN: config.flashAttn,
   NO_FALLBACK: config.noFallback,
   SUPRIMIR_NST: config.suprimirNst,
+  AUTO_PARAR: config.autoParar,
+  SILENCIO_LIMIAR: config.silencioLimiar,
+  SILENCIO_DURACAO: config.silencioDuracao,
+  DURACAO_MAX: config.duracaoMax,
   WHISPER_BIN: 'whisper-cli',
   SOX_BIN: 'sox',
 };

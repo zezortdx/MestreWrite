@@ -24,9 +24,11 @@ Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA d
 
 - [x] App empacotado encontra `sox`/`whisper-cli` do Homebrew (resolve o `PATH` no
   startup — `src/main/binpath.js`) + checagem de dependências.
+- [x] Ícones do app (fundo branco) e da bandeja (orb), gerados do orb ([[ADR-011-icones-app-e-tray]]).
+- [x] CI (GitHub Actions): build de `.dmg` (macOS) e `.exe` (Windows) por tag ([[ADR-010-suporte-windows-cross-platform]]).
 
 > 🔜 **Próximos:** instalador único (empacotar deps + modelo, ou baixar o modelo no
-> app), build **x64/universal**, **assinatura/notarização** e **CI** (GitHub Actions).
+> app), build **x64/universal** e **assinatura/notarização**.
 
 ## Fase 2 — Correção por IA 🔜
 - [ ] Camada de correção inteligente (pontuação, limpeza, concordância).
@@ -36,8 +38,9 @@ Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA d
 Ver [[Funcionalidades]].
 
 ## Fase 3 — Multiplataforma 🟣
-- [ ] Suporte a **Windows**.
-- [ ] Suporte a **Linux**.
+- [~] Suporte a **Windows** — código cross-platform pronto + build via CI;
+  runtime (SendKeys/áudio) **a validar** em Windows ([[ADR-010-suporte-windows-cross-platform]]).
+- [ ] Suporte a **Linux** (best-effort iniciado: colar via `xdotool`).
 - [ ] Captura de áudio nativa (substituir `sox` onde fizer sentido).
 - [ ] Inserção de texto nativa por plataforma.
 

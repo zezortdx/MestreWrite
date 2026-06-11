@@ -28,3 +28,10 @@ gerar 1024 icon_512x512@2x.png
 iconutil -c icns icon.iconset -o icon.icns
 rm -rf icon.iconset
 echo "build-assets/icon.icns gerado."
+
+# Ícone da barra de menus (tray) a partir do orb sozinho.
+if [ -f tray-master.png ]; then
+  sips -z 22 22 tray-master.png --out ../src/assets/tray-icon.png >/dev/null
+  sips -z 44 44 tray-master.png --out ../src/assets/tray-icon@2x.png >/dev/null
+  echo "src/assets/tray-icon.png + tray-icon@2x.png gerados."
+fi

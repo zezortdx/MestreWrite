@@ -62,6 +62,14 @@ em Web Audio** (sem arquivo). Tudo **sem bibliotecas extras** — só web nativa
 respeitando a CSP estrita. Histórico em [[ADR-004-overlay-visual]] (v1, Canvas 2D)
 e decisões atuais em [[ADR-005-overlay-pilula-webgl]] (v2).
 
+## 🪟 Cross-platform & CI
+O código é **multiplataforma** via `process.platform` ([[ADR-010-suporte-windows-cross-platform]]):
+colar texto (`osascript` no macOS, `SendKeys` no Windows, `xdotool` no Linux),
+captura de áudio (`sox -d` vs `-t waveaudio`) e resolução de binários
+(`src/main/binpath.js`). O empacotamento gera `.dmg` (macOS) e `.exe`/NSIS (Windows),
+compilados em runners nativos pelo **GitHub Actions** (`.github/workflows/build.yml`)
+a cada tag. Ícones (app + bandeja) saem do orb ([[ADR-011-icones-app-e-tray]]).
+
 ## Trade-offs gerais
 
 | Tema | Escolha | Em troca de |

@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-prot%C3%B3tipo%20(WIP)-orange" alt="status" />
-  <img src="https://img.shields.io/badge/plataforma-macOS-blue" alt="plataforma" />
+  <img src="https://img.shields.io/badge/plataforma-macOS%20%C2%B7%20Windows-blue" alt="plataforma" />
   <img src="https://img.shields.io/badge/licen%C3%A7a-MIT-green" alt="licença" />
   <img src="https://img.shields.io/badge/vers%C3%A3o-0.1.0-lightgrey" alt="versão" />
 </p>
@@ -19,9 +19,10 @@
 
 ## ⚠️ Status
 
-Projeto em fase de **protótipo (Work In Progress)**. O MVP cobre **macOS** com
-**transcrição crua** (fala → texto, sem correção por IA ainda). Escopo em
-[docs/MVP.md](docs/MVP.md); direção em [docs/Roadmap.md](docs/Roadmap.md).
+Projeto em fase de **protótipo (Work In Progress)**, com **transcrição crua** (fala
+→ texto, sem correção por IA ainda). **macOS** é a plataforma testada; o **Windows**
+é **experimental** (código pronto e build via CI, mas ainda pouco testado). Escopo
+em [docs/MVP.md](docs/MVP.md); direção em [docs/Roadmap.md](docs/Roadmap.md).
 
 ## ✨ Visão geral
 
@@ -40,16 +41,18 @@ orb como rosto do app:
 |:------:|:------:|:------:|
 | ![Atalho](docs/assets/setup-atalho.png) | ![Idioma](docs/assets/setup-idioma.png) | ![Modelo](docs/assets/setup-modelo.png) |
 
-## ⬇️ Baixar e instalar (uso normal)
+## ⬇️ Baixar e instalar
 
-> macOS (Apple Silicon). Tudo roda no seu Mac — nada vai para a nuvem.
+Baixe o instalador da sua plataforma na página de
+[**Releases**](https://github.com/pedrojuliocabralneto/mestrewrite/releases). Tudo
+roda na sua máquina — nada vai para a nuvem.
 
-1. **Baixe** o arquivo `MestreWrite-<versão>-arm64.dmg` na página de
-   [**Releases**](https://github.com/pedrojuliocabralneto/mestrewrite/releases).
-2. Abra o `.dmg` e **arraste o MestreWrite para a pasta Aplicativos**.
-3. **Na primeira abertura:** como o app é open source e **não assinado**, clique
-   nele com o **botão direito → Abrir → Abrir** (só na 1ª vez; depois abre normal).
-4. **Instale os componentes de transcrição** (uma vez só), no Terminal — precisa do
+### 🍎 macOS (Apple Silicon)
+
+1. Baixe o `MestreWrite-<versão>-arm64.dmg`, abra-o e **arraste o MestreWrite para a
+   pasta Aplicativos**.
+2. **Na 1ª abertura** (app não assinado): **clique direito no app → Abrir → Abrir**.
+3. Instale os componentes de transcrição (uma vez), no Terminal — precisa do
    [Homebrew](https://brew.sh):
    ```bash
    brew install sox whisper-cpp
@@ -57,15 +60,35 @@ orb como rosto do app:
    curl -L -o ~/mestrewrite/models/ggml-base.bin \
      https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin
    ```
-   > O próprio app mostra o comando exato, por notificação, se algo faltar.
-5. Na **primeira execução**, a tela de setup pede atalho, idioma e modelo. Conceda
-   **Microfone** e **Acessibilidade** quando o macOS pedir.
-6. **Use em qualquer app:** aperte o atalho (padrão `Cmd + Shift + Espaço`), fale e
-   **pare de falar** — ao detectar a pausa, ele transcreve e **cola o texto** onde o
-   cursor estiver. O app vive na **barra de menus** (ícone roxo); saia por ali.
+4. Na 1ª execução, faça o setup (atalho/idioma/modelo) e conceda **Microfone** e
+   **Acessibilidade** quando o macOS pedir.
 
-> Por enquanto os componentes do passo 4 são instalados uma vez à mão. Empacotar
-> tudo num instalador único é um próximo passo do [Roadmap](docs/Roadmap.md).
+### 🪟 Windows · *experimental*
+
+> ⚠️ Suporte a Windows é **novo** e ainda **pouco testado** — feedback é bem-vindo.
+
+1. Baixe e rode o `MestreWrite-Setup-<versão>.exe`. No aviso do **SmartScreen**:
+   **Mais informações → Executar assim mesmo** (app não assinado).
+2. Instale os componentes de transcrição (uma vez), no PowerShell:
+   ```powershell
+   # sox (escolha um): scoop install sox | choco install sox | winget install sox
+   # whisper.cpp: baixe os binários do Windows em
+   #   https://github.com/ggerganov/whisper.cpp/releases
+   #   e deixe whisper-cli.exe no PATH (em builds antigos: renomeie main.exe → whisper-cli.exe)
+   mkdir $HOME\mestrewrite\models
+   curl -L -o $HOME\mestrewrite\models\ggml-base.bin `
+     https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin
+   ```
+3. Abra o MestreWrite e faça o setup. O app encontra `sox`/`whisper-cli` pelo PATH.
+
+### ▶️ Usar (qualquer plataforma)
+
+Aperte o atalho (padrão **`Cmd/Ctrl + Shift + Espaço`**), fale e **pare de falar** —
+ao detectar a pausa, ele transcreve e **cola o texto** onde o cursor estiver. O app
+vive na **barra de menus / bandeja** (ícone do orb); saia por ali.
+
+> O próprio app avisa, com o comando exato, se faltar `sox`, `whisper-cli` ou o
+> modelo. Empacotar tudo num instalador único está no [Roadmap](docs/Roadmap.md).
 
 ## 🧑‍💻 Rodar do código-fonte (desenvolvimento)
 
@@ -87,19 +110,23 @@ Guia completo (permissões, troubleshooting, ajuste do silêncio) em
 
 ## 📦 Build (empacotar como app)
 
-Gerar um app macOS (`.app`, `.dmg` e `.zip`) com
-[electron-builder](https://www.electron.build/):
+Com [electron-builder](https://www.electron.build/):
 
 ```bash
-npm run dist     # → dist/MestreWrite-<versão>-arm64.dmg (e .zip)
-npm run pack     # build rápido só do .app (sem empacotar), para testar
-npm run icone    # regenera o ícone do app a partir do orb
+npm run dist:mac   # macOS  → dist/MestreWrite-<versão>-arm64.dmg (e .zip)
+npm run dist:win   # Windows → dist/MestreWrite-Setup-<versão>.exe (NSIS)
+npm run pack       # build rápido só do app (sem empacotar), para testar
+npm run icone      # regenera ícones (app + bandeja) a partir do orb
 ```
 
-> Builds **não assinados** (open source): na 1ª abertura use **clique direito →
-> Abrir**. O app empacotado encontra o `sox`/`whisper-cli` do Homebrew
-> automaticamente (resolve o `PATH` no startup); só precisa que estejam instalados
-> (passo 4 acima).
+> Cada plataforma deve ser compilada no seu próprio SO. O
+> [GitHub Actions](.github/workflows/build.yml) faz isso automaticamente: a cada
+> **tag `vX.Y.Z`** ele compila o `.dmg` (runner macOS) e o `.exe` (runner Windows)
+> e anexa à **Release**.
+
+> Builds **não assinados** (open source): 1ª abertura via **clique direito → Abrir**
+> (macOS) ou **SmartScreen → Executar assim mesmo** (Windows). O app encontra
+> `sox`/`whisper-cli` pelo `PATH` automaticamente (só precisa estarem instalados).
 
 ## 📚 Documentação
 

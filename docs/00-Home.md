@@ -37,6 +37,8 @@ voz local, offline e open source para desktop.
 - [[ADR-007-setup-primeira-execucao]] — tela de setup (atalho/idioma/modelo), tema claro.
 - [[ADR-008-empacotamento-electron-builder]] — build `.dmg`/`.zip` + ícone do orb.
 - [[ADR-009-vad-silencio-e-otimizacao]] — parada por silêncio (VAD) + otimizações.
+- [[ADR-010-suporte-windows-cross-platform]] — código cross-platform + build Windows via CI.
+- [[ADR-011-icones-app-e-tray]] — ícone do app (branco) e da bandeja (orb).
 
 ---
 

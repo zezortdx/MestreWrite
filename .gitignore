@@ -10,6 +10,9 @@ dist/
 build/
 out/
 
+# Intermediário do gerador de ícone (regerado por `npm run icone`)
+build-assets/tray-master.png
+
 # Modelos whisper (baixados localmente, pesados)
 models/
 *.bin

@@ -19,7 +19,9 @@
     "dev": "electron .",
     "icone": "electron scripts/gerar-icone.js && bash scripts/gerar-icns.sh",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder --mac",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
     "lint": "echo \"[placeholder] Lint ainda não configurado\" && exit 0"
   },
   "keywords": [
@@ -73,6 +75,19 @@
     },
     "dmg": {
       "title": "MestreWrite ${version}"
+    },
+    "win": {
+      "icon": "build-assets/icon.png",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "MestreWrite"
     }
   }
 }

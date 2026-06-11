@@ -1,13 +1,58 @@
 // typer.js — inserção de texto no app em foco via clipboard + colagem.
-// Estratégia definida em docs/Decisões/ADR-003-inserção-via-clipboard.md:
-// 1. Salva o conteúdo ATUAL do clipboard do usuário.
-// 2. Escreve o texto transcrito no clipboard.
-// 3. Simula ⌘V via osascript (System Events).
-// 4. Após 300ms, RESTAURA o clipboard original.
-// Essencial: não destruir o que o usuário tinha copiado.
+// Estratégia (ADR-003): salva o clipboard do usuário, escreve o texto, simula a
+// colagem (⌘V no macOS, Ctrl+V no Windows) e restaura o clipboard original.
+//
+// Cross-platform (ADR-010):
+//   - macOS:   osascript → System Events keystroke "v" using command down
+//   - Windows: PowerShell → System.Windows.Forms.SendKeys "^v"
+//   - Linux:   xdotool key ctrl+v (best-effort)
 
 const { clipboard, Notification } = require('electron');
 const { spawn } = require('child_process');
+
+// Define como simular a colagem em cada plataforma.
+function comandoColar() {
+  if (process.platform === 'darwin') {
+    return {
+      cmd: 'osascript',
+      args: ['-'],
+      stdin: 'tell application "System Events"\nkeystroke "v" using command down\nend tell',
+      restauraMs: 300,
+    };
+  }
+  if (process.platform === 'win32') {
+    // SendKeys: ^ = Ctrl. Pequena espera p/ o foco/clipboard assentarem.
+    const ps =
+      "Add-Type -AssemblyName System.Windows.Forms; " +
+      "Start-Sleep -Milliseconds 40; " +
+      "[System.Windows.Forms.SendKeys]::SendWait('^v')";
+    return {
+      cmd: 'powershell',
+      args: ['-NoProfile', '-NonInteractive', '-Command', ps],
+      stdin: null,
+      restauraMs: 450,
+    };
+  }
+  // Linux (best-effort) — requer xdotool.
+  return {
+    cmd: 'xdotool',
+    args: ['key', '--clearmodifiers', 'ctrl+v'],
+    stdin: null,
+    restauraMs: 300,
+  };
+}
+
+function avisoFalha() {
+  if (process.platform === 'darwin') {
+    return 'Permissão de Acessibilidade necessária. Vá em Ajustes do Sistema > ' +
+      'Privacidade e Segurança > Acessibilidade e adicione o MestreWrite.';
+  }
+  if (process.platform === 'win32') {
+    return 'Não foi possível colar (SendKeys). Tente novamente com o cursor no ' +
+      'campo de texto desejado.';
+  }
+  return 'Não foi possível colar. Instale o xdotool (X11) e tente novamente.';
+}
 
 function inserirTexto(texto) {
   return new Promise((resolve) => {
@@ -16,54 +61,53 @@ function inserirTexto(texto) {
       return;
     }
 
-    // 1. Salvar clipboard atual
-    const clipboardOriginal = clipboard.readText();
+    const { cmd, args, stdin, restauraMs } = comandoColar();
 
-    // 2. Escrever o texto transcrito
+    // 1. Salvar clipboard atual e 2. escrever o texto transcrito.
+    const clipboardOriginal = clipboard.readText();
     clipboard.writeText(texto);
 
-    // 3. Simular ⌘V via AppleScript — via stdin para evitar shell escaping
-    const asScript = `tell application "System Events"\nkeystroke "v" using command down\nend tell`;
-
-    const child = spawn('osascript', ['-'], { stdio: ['pipe', 'ignore', 'pipe'] });
-
-    let erroStderr = '';
-
-    child.stderr.on('data', (data) => {
-      erroStderr += data.toString();
+    // 3. Simular a colagem.
+    const child = spawn(cmd, args, {
+      stdio: [stdin != null ? 'pipe' : 'ignore', 'ignore', 'pipe'],
     });
 
+    let erroStderr = '';
+    if (child.stderr) child.stderr.on('data', (d) => (erroStderr += d.toString()));
+
     child.on('error', () => {
-      // spawn falhou (osascript não encontrado) — improvável no macOS
+      // spawn falhou (binário não encontrado, ex.: xdotool no Linux).
+      new Notification({ title: 'MestreWrite — Não foi possível colar', body: avisoFalha() }).show();
+      restaurar();
     });
 
     child.on('close', (codigo) => {
       if (codigo !== 0) {
-        const msg =
-          'Permissão de Acessibilidade necessária. Vá em Ajustes do Sistema > ' +
-          'Privacidade e Segurança > Acessibilidade e adicione o MestreWrite.';
-
-        new Notification({
-          title: 'MestreWrite — Permissão necessária',
-          body: msg,
-        }).show();
-
-        console.error('[typer] Erro ao colar (código ' + codigo + '):', erroStderr);
+        new Notification({ title: 'MestreWrite — Não foi possível colar', body: avisoFalha() }).show();
+        console.error(`[typer] colar falhou (código ${codigo}):`, erroStderr);
       }
+      restaurar();
+    });
 
-      // 4. Restaurar o clipboard original após 300ms
+    let restaurado = false;
+    function restaurar() {
+      if (restaurado) return;
+      restaurado = true;
+      // 4. Restaurar o clipboard original após a colagem.
       setTimeout(() => {
         try {
           clipboard.writeText(clipboardOriginal);
         } catch {
-          // Se falhar, paciência — o texto do usuário pode ter sido substituído.
+          /* paciência — o conteúdo pode ter sido substituído */
         }
         resolve();
-      }, 300);
-    });
+      }, restauraMs);
+    }
 
-    child.stdin.write(asScript);
-    child.stdin.end();
+    if (stdin != null && child.stdin) {
+      child.stdin.write(stdin);
+      child.stdin.end();
+    }
   });
 }
 

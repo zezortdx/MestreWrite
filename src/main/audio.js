@@ -33,8 +33,14 @@ function iniciarGravacao() {
     const nome = `mestrewrite_${Date.now()}.wav`;
     caminhoWav = path.join(os.tmpdir(), nome);
 
-    // sox -d -r 16000 -c 1 -b 16 <arquivo.wav> [efeitos]
-    const args = ['-d', '-r', '16000', '-c', '1', '-b', '16', caminhoWav, 'highpass', '80'];
+    // Dispositivo de entrada por plataforma: macOS/Linux usam o device padrão
+    // (`-d`); Windows usa o driver WaveAudio (`-t waveaudio default`).
+    const entrada = process.platform === 'win32'
+      ? ['-t', 'waveaudio', 'default']
+      : ['-d'];
+
+    // sox <entrada> -r 16000 -c 1 -b 16 <arquivo.wav> [efeitos]
+    const args = [...entrada, '-r', '16000', '-c', '1', '-b', '16', caminhoWav, 'highpass', '80'];
     if (AUTO_PARAR) {
       const limiar = `${SILENCIO_LIMIAR}%`;
       // silence 1 0.1 L  → começa ao detectar fala (corta silêncio inicial)

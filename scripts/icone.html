@@ -10,7 +10,7 @@
         background: transparent;
         overflow: hidden;
       }
-      /* Squircle do ícone (com a margem que o macOS espera ~100px). */
+      /* Squircle BRANCO (com a margem que o macOS espera ~100px). */
       .icone {
         position: absolute;
         left: 100px;
@@ -19,16 +19,17 @@
         height: 824px;
         border-radius: 185px;
         overflow: hidden;
-        background: radial-gradient(125% 120% at 30% 16%, #5a2fb0 0%, #2c1668 46%, #140a2e 100%);
+        background: linear-gradient(180deg, #ffffff 0%, #f5f1ff 100%);
         box-shadow:
-          inset 0 3px 8px rgba(255, 255, 255, 0.22),
-          inset 0 -40px 100px rgba(0, 0, 0, 0.5);
+          inset 0 4px 6px rgba(255, 255, 255, 0.9),
+          inset 0 -60px 120px rgba(120, 60, 220, 0.06),
+          inset 0 0 0 3px rgba(140, 80, 255, 0.07);
       }
-      /* Brilho central que envolve o orb. */
+      /* Glow violeta suave envolvendo o orb (sobre o branco). */
       .glow {
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at 50% 47%, rgba(190, 130, 255, 0.5), transparent 62%);
+        background: radial-gradient(circle at 50% 47%, rgba(160, 90, 255, 0.22), transparent 60%);
       }
       /* O orb iridescente (mesmo shader do app). */
       canvas.orb {
@@ -37,17 +38,8 @@
         top: 50%;
         width: 600px;
         height: 600px;
-        transform: translate(-50%, -52%);
-        filter: drop-shadow(0 0 46px rgba(150, 80, 255, 0.65));
-      }
-      /* Realce vítreo no topo (profundidade). */
-      .top {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: 48%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent);
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(0 10px 30px rgba(120, 50, 230, 0.35));
       }
     </style>
   </head>
@@ -55,14 +47,12 @@
     <div class="icone">
       <div class="glow"></div>
       <canvas class="orb" width="1200" height="1200"></canvas>
-      <div class="top"></div>
     </div>
 
     <script src="../src/overlay/orb-core.js"></script>
     <script>
       const canvas = document.querySelector(".orb");
       const orb = window.MestreOrb ? window.MestreOrb.montar(canvas, {}) : null;
-      // Avança o tempo do shader para um quadro "maduro" (mais bonito que t=0).
       let t = 0;
       function frame(ts) {
         if (!t) t = ts;

@@ -5,13 +5,13 @@
   "license": "MIT",
   "private": true,
   "author": "Pedro Júlio Cabral Neto <pedrojuliocabralneto@gmail.com>",
-  "homepage": "https://github.com/pedrojuliocabralneto/mestrewrite",
+  "homepage": "https://github.com/zezortdx/mestrewrite",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pedrojuliocabralneto/mestrewrite.git"
+    "url": "https://github.com/zezortdx/mestrewrite.git"
   },
   "bugs": {
-    "url": "https://github.com/pedrojuliocabralneto/mestrewrite/issues"
+    "url": "https://github.com/zezortdx/mestrewrite/issues"
   },
   "main": "src/main/main.js",
   "scripts": {

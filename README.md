@@ -5,8 +5,8 @@
 <h1 align="center">MestreWrite</h1>
 
 <p align="center">
-  <a href="https://github.com/zezortdx/mestrewrite/stargazers">
-    <img src="https://img.shields.io/github/stars/zezortdx/mestrewrite?style=social" alt="GitHub stars" />
+  <a href="https://github.com/zezortdx/MestreWrite/stargazers">
+    <img src="https://img.shields.io/github/stars/zezortdx/MestreWrite?style=social" alt="GitHub stars" />
   </a>
 </p>
 
@@ -50,7 +50,7 @@ como rosto do app:
 ## Baixar e instalar
 
 Baixe o instalador da sua plataforma na página de
-[Releases](https://github.com/zezortdx/mestrewrite/releases). Tudo roda na sua
+[Releases](https://github.com/zezortdx/MestreWrite/releases). Tudo roda na sua
 máquina — nada vai para a nuvem.
 
 ### macOS (Apple Silicon)

@@ -19,6 +19,7 @@ Direção do MestreWrite, em fases. Cada fase entrega valor sozinha.
 - [x] Setup de primeira execução (atalho/idioma/modelo) — `src/setup/` ([[ADR-007-setup-primeira-execucao]]).
 - [x] Empacotamento `.dmg`/`.zip` + ícone do orb — `electron-builder` ([[ADR-008-empacotamento-electron-builder]]).
 - [x] Parada automática por silêncio (VAD) + otimizações de velocidade/peso ([[ADR-009-vad-silencio-e-otimizacao]]).
+- [x] Desempenho do STT: servidor whisper persistente (sem cold-start) + VAD 0,8s + flags greedy/no-context ([[ADR-012-desempenho-stt-servidor-vad]]).
 
 Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA de correção).
 
@@ -34,6 +35,8 @@ Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA d
 - [ ] Camada de correção inteligente (pontuação, limpeza, concordância).
 - [ ] [[Modos de escrita|Funcionalidades]] (formal, casual, código).
 - [ ] Comandos de voz básicos.
+- [ ] Modelo melhor para PT (`small` ou `large-v3-turbo`) — maior acurácia/consistência;
+  já viável sem perder velocidade graças ao servidor persistente ([[ADR-012-desempenho-stt-servidor-vad]]).
 
 Ver [[Funcionalidades]].
 

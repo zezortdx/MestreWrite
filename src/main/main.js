@@ -47,10 +47,11 @@ function abrirSetup() {
 }
 
 // ── Módulos de negócio (carregados só após setup confirmar que config existe) ─
-const { TECLA_ATALHO, PATH_MODELO, DURACAO_MAX } = require('./config');
+const { TECLA_ATALHO, PATH_MODELO, DURACAO_MAX, USAR_SERVIDOR } = require('./config');
 const { iniciarGravacao, pararGravacao } = require('./audio');
 const { transcrever, modeloExiste, caminhoModelo } = require('./transcribe');
 const { inserirTexto } = require('./typer');
+const { iniciarServidor, pararServidor } = require('./whisperServer');
 
 // O som de ativação (Web Audio) é disparado por mudança de estado vinda de um
 // atalho global — não há gesto do usuário no DOM. Esta flag permite que o
@@ -285,6 +286,16 @@ app.whenReady().then(() => {
   if (!registrado) {
     console.error(`[main] Falha ao registrar atalho: ${TECLA_ATALHO}`);
   }
+
+  // Sobe o whisper-server persistente (best-effort). Se não subir, o
+  // transcribe.js usa o whisper-cli automaticamente (fallback).
+  if (USAR_SERVIDOR && modeloExiste()) {
+    iniciarServidor().then((ok) => {
+      console.log(ok
+        ? '[main] whisper-server pronto (modelo na memória).'
+        : '[main] whisper-server indisponível — usando whisper-cli.');
+    });
+  }
 });
 
 app.on('window-all-closed', () => {
@@ -295,4 +306,5 @@ app.on('window-all-closed', () => {
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
+  pararServidor();
 });

@@ -11,13 +11,16 @@ const DEFAULTS = {
   modelo: 'base',
   // Aproveita os núcleos de performance (Apple Silicon costuma ter 4–8).
   threads: Math.min(8, os.cpus().length || 4),
-  flashAttn: true,
+  flashAttn: false, // PT: ganho ~0 e pode degradar qualidade (whisper.cpp #3020)
   noFallback: true,
   suprimirNst: true,
+  noContexto: true, // -nc: cada ditado é independente (evita arrastar alucinação)
+  beamSize: 1, // greedy: determinístico e mais rápido
+  usarServidor: true, // whisper-server persistente (elimina o cold-start do modelo)
   // Parada automática por silêncio (VAD nativo do sox — ver audio.js).
   autoParar: true,
   silencioLimiar: 2, // % do volume tido como "silêncio"
-  silencioDuracao: 1.8, // s de silêncio contínuo p/ encerrar a fala
+  silencioDuracao: 0.8, // s de silêncio p/ encerrar (antes 1.8 — menos espera)
   duracaoMax: 30, // s — trava de segurança (força a parada)
 };
 
@@ -44,7 +47,18 @@ function carregarConfig() {
 
 function salvarConfig(dados) {
   garantirDiretorio();
-  const atual = carregarConfig();
+  // Mescla com o ARQUIVO existente — NÃO com os DEFAULTS. Assim o config.json só
+  // guarda o que foi explicitamente salvo (escolhas do usuário) e não "congela"
+  // os valores padrão; defaults novos (ex.: tuning de VAD/whisper) passam a valer
+  // em versões futuras sem o usuário ter que reconfigurar.
+  let atual = {};
+  if (configExiste()) {
+    try {
+      atual = JSON.parse(fs.readFileSync(ARQUIVO_CONFIG, 'utf-8'));
+    } catch {
+      atual = {};
+    }
+  }
   const novo = { ...atual, ...dados };
   fs.writeFileSync(ARQUIVO_CONFIG, JSON.stringify(novo, null, 2), 'utf-8');
   return novo;

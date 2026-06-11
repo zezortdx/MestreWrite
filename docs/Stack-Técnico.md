@@ -23,6 +23,9 @@ Implementação em C/C++ do modelo Whisper de transcrição, rodando **localment
 - **Prós:** local, offline, rápido em CPU/Metal, qualidade alta, sem custo por uso.
 - **Contras:** binário/modelo precisam ser instalados; modelos grandes ocupam espaço.
 - Decisão: [[ADR-002-whisper-local]].
+- **Servidor persistente:** roda como `whisper-server` (modelo na memória, POST
+  `/inference`) para eliminar o cold-start; cai no `whisper-cli` se indisponível.
+  Ver [[ADR-012-desempenho-stt-servidor-vad]].
 
 ## sox
 Utilitário de linha de comando para capturar áudio do microfone no MVP, invocado

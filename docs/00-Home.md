@@ -25,6 +25,7 @@ voz local, offline e open source para desktop.
 - [[Arquitetura]] — componentes do sistema e como se conectam.
 - [[Stack-Técnico]] — tecnologias escolhidas, decisões e trade-offs.
 - [[Setup]] — instalar deps, baixar o modelo, permissões e rodar (macOS).
+- [[Status]] — snapshot do estado atual (publicação, o que funciona, pendências).
 - [[Checklist-de-commit]] — verificação anti-vazamento antes de cada commit.
 
 ## Decisões de Arquitetura (ADRs)

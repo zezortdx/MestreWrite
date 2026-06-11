@@ -19,9 +19,9 @@
     "dev": "electron .",
     "icone": "electron scripts/gerar-icone.js && bash scripts/gerar-icns.sh",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "dist:mac": "electron-builder --mac",
-    "dist:win": "electron-builder --win",
+    "dist": "electron-builder --publish never",
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:win": "electron-builder --win --publish never",
     "lint": "echo \"[placeholder] Lint ainda não configurado\" && exit 0"
   },
   "keywords": [

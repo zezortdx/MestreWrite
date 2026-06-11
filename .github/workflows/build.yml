@@ -34,9 +34,9 @@ jobs:
       - name: Build (${{ matrix.os }})
         run: npm run ${{ matrix.script }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Não tentar assinar no macOS do CI (build não assinado).
           CSC_IDENTITY_AUTO_DISCOVERY: false
+          # Sem auto-publish do electron-builder; a Release é feita no job `release`.
 
       - uses: actions/upload-artifact@v4
         with:

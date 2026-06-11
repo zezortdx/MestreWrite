@@ -1,7 +1,7 @@
 # ADR-011 — Ícones do app (fundo branco) e da bandeja (orb), gerados do orb
 
 ## Status
-✅ Aceito (2026-06)
+Aceito (2026-06)
 
 ## Contexto
 O ícone do app era um **squircle violeta escuro** com o orb; o ícone da bandeja

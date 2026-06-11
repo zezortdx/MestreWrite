@@ -39,38 +39,38 @@ Atalho global (Cmd+Shift+Space)
 
 ## Componentes (todos implementados)
 
-### 1. 🧰 Ícone na bandeja (tray) ✅ `src/main/main.js`
+### 1. Ícone na bandeja (tray) `src/main/main.js`
 Ícone roxo na barra de menus com tooltip dinâmico (Pronto / Gravando… / Transcrevendo…)
 e menu "Sair". Indispensável pois o dock fica oculto.
 
-### 2. ⌨️ Atalho global ✅ `src/main/main.js`
+### 2. Atalho global `src/main/main.js`
 `Cmd+Shift+Space` registrado via `globalShortcut`. Inicia gravação (IDLE → RECORDING).
 A parada é **automática por silêncio** (o sox encerra sozinho); o atalho de novo
 força a parada. Ignorado em TRANSCRIBING para evitar corrida. Ver
 [[ADR-009-vad-silencio-e-otimizacao]].
 
-### 3. 🎙️ Gravação de áudio ✅ `src/main/audio.js`
+### 3. Gravação de áudio `src/main/audio.js`
 Spawna `sox -d -r 16000 -c 1 -b 16 <wav> highpass 80 silence …` como child process
 (**VAD nativo**: corta o silêncio inicial e encerra após ~1,8 s de silêncio).
 Arquivo único em `os.tmpdir()`; resolve no `close` (silêncio ou SIGTERM). Trava de
 tempo de 30 s. Erro: `Notification` se `sox` não instalado. Ver [[ADR-009-vad-silencio-e-otimizacao]].
 
-### 4. 🧠 Transcrição com whisper.cpp ✅ `src/main/transcribe.js`
+### 4. Transcrição com whisper.cpp `src/main/transcribe.js`
 Spawna `whisper-cli -m <modelo> -f <wav> -l pt -nt --output-txt -of <base>`.
 Valida existência do modelo antes da gravação. Lê `.txt`, deleta `.wav` + `.txt`
 (privacidade — nada persiste). Erro: `Notification` se `whisper-cli` não instalado.
 
-### 5. 🌈 Overlay visual ✅ `src/overlay/`
+### 5. Overlay visual `src/overlay/`
 Orb WebGL iridescente dentro de pílula branca frosted + waveform + glow nas bordas
 + bloom + chime sonoro. Estados idle/listening/processing via IPC.
 Detalhes em [[Design]], [[ADR-004-overlay-visual]] e [[ADR-005-overlay-pilula-webgl]].
 
-### 6. 📝 Inserção de texto ✅ `src/main/typer.js`
+### 6. Inserção de texto `src/main/typer.js`
 Salva clipboard → `clipboard.writeText(texto)` → spawn `osascript` com ⌘V via
 stdin (sem shell escaping) → 300ms → restaura clipboard original.
 Erro: `Notification` orientando permissão de Acessibilidade.
 
-### 7. ⚙️ Configuração centralizada ✅ `src/main/config.js`
+### 7. Configuração centralizada `src/main/config.js`
 Atalho (`CmdOrCtrl+Shift+Space`), idioma (`pt`), caminho do modelo
 (`~/mestrewrite/models/ggml-base.bin`), nomes dos binários.
 

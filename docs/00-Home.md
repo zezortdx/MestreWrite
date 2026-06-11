@@ -1,4 +1,4 @@
-# 🏠 MestreWrite — Mapa do Vault
+# MestreWrite — Mapa do Vault
 
 Bem-vindo ao vault de documentação do **MestreWrite**, o assistente de escrita por
 voz local, offline e open source para desktop.
@@ -6,27 +6,27 @@ voz local, offline e open source para desktop.
 > Use este documento como ponto de partida. Todas as notas estão interligadas
 > com [[wikilinks]] do Obsidian.
 
-## 🧭 Fundamentos
+## Fundamentos
 
 - [[Visão]] — visão, missão, filosofia e os 5 princípios.
 - [[Problema]] — limitações das ferramentas atuais de ditado e transcrição.
 - [[Público-Alvo]] — para quem o MestreWrite é feito.
 - [[Privacidade]] — por que tudo roda localmente.
 
-## ⚙️ Produto
+## Produto
 
 - [[Funcionalidades]] — escrita por voz, correção, modos, comandos, dicionário, histórico, extensões.
 - [[MVP]] — escopo exato do primeiro protótipo (macOS, transcrição crua).
 - [[Design]] — pílula de voz, orb iridescente (WebGL), glow nas bordas, estados.
 - [[Roadmap]] — fases do projeto, do MVP à plataforma.
 
-## 🏗️ Engenharia
+## Engenharia
 
 - [[Arquitetura]] — componentes do sistema e como se conectam.
 - [[Stack-Técnico]] — tecnologias escolhidas, decisões e trade-offs.
 - [[Setup]] — instalar deps, baixar o modelo, permissões e rodar (macOS).
 
-## 📐 Decisões de Arquitetura (ADRs)
+## Decisões de Arquitetura (ADRs)
 
 - [[ADR-001-electron]] — por que Electron.
 - [[ADR-002-whisper-local]] — por que whisper.cpp local.

@@ -1,7 +1,7 @@
 # ADR-007 — Setup de primeira execução (atalho, idioma, modelo)
 
 ## Status
-✅ Aceito (2026-06)
+Aceito (2026-06)
 
 ## Contexto
 O atalho, o idioma e o modelo viviam fixos em `src/main/config.js`. Para o app ser

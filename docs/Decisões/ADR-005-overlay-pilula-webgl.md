@@ -1,7 +1,7 @@
 # ADR-005 — Overlay v2: pílula + orb WebGL + glow nas bordas + som de ativação
 
 ## Status
-✅ Aceito (2026-06) · 🔄 estética revisável · **emenda a [[ADR-004-overlay-visual]]**
+Aceito (2026-06) · estética revisável · **emenda a [[ADR-004-overlay-visual]]**
 (a janela e o modelo de estados via IPC da ADR-004 continuam valendo; o que muda
 é o desenho do orb, da borda e o indicador).
 
@@ -17,7 +17,7 @@ cantos retos**. No uso, três problemas apareceram:
 3. Faltava um indicador compacto de voz e um "momento" de ativação (estilo
    Apple Intelligence) com feedback sonoro.
 
-> ⚠️ Restrições herdadas que moldaram as decisões: projeto **Electron vanilla**
+> Restrições herdadas que moldaram as decisões: projeto **Electron vanilla**
 > (sem React/Tailwind/bundler), **CSP estrita** (`default-src 'none'; script-src
 > 'self'`), renderer com `sandbox:true`/`contextIsolation:true`. Por isso **não**
 > adotamos o componente React/OGL como veio — portamos só o que importa.

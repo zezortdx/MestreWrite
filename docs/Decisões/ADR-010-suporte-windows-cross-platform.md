@@ -1,7 +1,7 @@
 # ADR-010 — Suporte a Windows (código cross-platform + build via CI)
 
 ## Status
-✅ Aceito (2026-06) · ⚠️ Windows **experimental** (não testado em runtime ainda)
+Aceito (2026-06) · Windows **experimental** (não testado em runtime ainda)
 
 ## Contexto
 O MestreWrite nasceu macOS-only e dependia de coisas específicas do macOS: colagem
@@ -48,7 +48,7 @@ sob `process.platform === 'darwin'`. Linux entra como *best-effort* (`xdotool`).
 - Caminho claro para Linux depois.
 
 **Negativas / trade-offs**
-- ⚠️ **Windows não testado em runtime** aqui — `SendKeys`/`waveaudio` precisam de
+- **Windows não testado em runtime** aqui — `SendKeys`/`waveaudio` precisam de
   validação numa máquina Windows real.
 - `SendKeys` pode ser sensível a foco; PowerShell tem startup mais lento que `osascript`.
 - Deps do Windows ainda são instaladas à mão (sem instalador único).

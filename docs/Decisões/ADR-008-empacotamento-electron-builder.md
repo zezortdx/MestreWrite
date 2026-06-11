@@ -1,7 +1,7 @@
 # ADR-008 — Empacotamento com electron-builder (.dmg/.zip) e ícone gerado do orb
 
 ## Status
-✅ Aceito (2026-06)
+Aceito (2026-06)
 
 ## Contexto
 Para virar uma **aplicação real** publicável no GitHub, o MestreWrite precisava de
@@ -51,7 +51,7 @@ de um **ícone próprio** coerente com a identidade (o orb).
 - Build **não assinado/notarizado** → aviso do Gatekeeper na 1ª abertura.
 - Só `arm64` por enquanto (x64/universal ficam como melhoria).
 
-> ✅ **PATH resolvido:** aberto pelo Finder, o app herdaria um `PATH` mínimo (sem
+> **PATH resolvido:** aberto pelo Finder, o app herdaria um `PATH` mínimo (sem
 > `/opt/homebrew/bin`). `src/main/binpath.js` acrescenta os diretórios comuns do
 > Homebrew/MacPorts ao `process.env.PATH` no startup, então `sox`/`whisper-cli`/
 > `osascript` são encontrados. Há também checagem de dependências no startup, com

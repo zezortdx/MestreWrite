@@ -4,7 +4,7 @@ Passos reais para instalar as dependências, baixar o modelo, conceder permissõ
 rodar o MestreWrite no macOS. O fluxo de ponta a ponta (atalho → fala → texto)
 está descrito em [[Arquitetura]]; o escopo em [[MVP]].
 
-## 1. 📦 Dependências (Homebrew)
+## 1. Dependências (Homebrew)
 ```bash
 brew install sox whisper-cpp
 ```
@@ -12,7 +12,7 @@ brew install sox whisper-cpp
 - `whisper-cpp` → transcrição local; instala o binário como **`whisper-cli`**
   (nome esperado em `src/main/config.js`).
 
-## 2. 🧠 Modelo do Whisper
+## 2. Modelo do Whisper
 O caminho é fixado em `src/main/config.js` (`PATH_MODELO`). Baixe o modelo **base**
 (~147 MB) para lá:
 ```bash
@@ -23,12 +23,12 @@ curl -L -o ~/mestrewrite/models/ggml-base.bin \
 > O app valida o modelo no startup e antes de gravar; se faltar, mostra uma
 > `Notification` com este comando. Idioma da transcrição = `pt` (em `config.js`).
 
-## 3. ▶️ Rodar
+## 3. Rodar
 ```bash
 npm install   # baixa o Electron
 npm start     # = electron .
 ```
-> ⚠️ Se o `node`/`npm` local estiver quebrado, dá para lançar direto pelo binário do
+> Se o `node`/`npm` local estiver quebrado, dá para lançar direto pelo binário do
 > Electron (sem `npm`):
 > ```bash
 > node_modules/electron/dist/Electron.app/Contents/MacOS/Electron .
@@ -38,7 +38,7 @@ npm start     # = electron .
 > **setup** para definir atalho, idioma e modelo; ao concluir, o app salva a config
 > e se relança (ver [[ADR-007-setup-primeira-execucao]]).
 
-## 3b. 📦 Build (empacotar como app)
+## 3b. Build (empacotar como app)
 Gerar um app macOS (`.app`, `.dmg`, `.zip`) com `electron-builder`
 (ver [[ADR-008-empacotamento-electron-builder]]):
 ```bash
@@ -50,7 +50,7 @@ npm run icone    # regenera o ícone do app a partir do orb
 > Abrir** p/ passar pelo Gatekeeper. O app empacotado ainda precisa de `sox`,
 > `whisper-cpp` e do modelo acessíveis (ver passos 1–2).
 
-## 4. 🔐 Permissões do macOS (primeira vez)
+## 4. Permissões do macOS (primeira vez)
 O app **precisa** de duas permissões — sem elas grava/cola falham com `Notification`:
 
 1. **Microfone** — para o `sox` gravar. Aparece prompt no primeiro uso; ou habilite
@@ -61,7 +61,7 @@ O app **precisa** de duas permissões — sem elas grava/cola falham com `Notifi
 > Em desenvolvimento (rodando pelo binário), as entradas aparecem como **“Electron”**.
 > Num `.app` empacotado/assinado, aparecerão como **“MestreWrite”**.
 
-## 5. ⌨️ Usar
+## 5. Usar
 1. **`Cmd+Shift+Space`** → começa a escutar (overlay: pílula + som + glow).
 2. Fale.
 3. **Pare de falar** → ao detectar ~1,8 s de silêncio, o app **encerra sozinho**
@@ -70,11 +70,11 @@ O app **precisa** de duas permissões — sem elas grava/cola falham com `Notifi
 4. **Sair:** ícone roxo no tray (barra de menus) → **Sair**. (Não há dock nem
    atalho de quit — o tray é a saída.)
 
-> 🎚️ **Ajuste do silêncio** (em `~/.mestrewrite/config.json`): `silencioDuracao`
+> **Ajuste do silêncio** (em `~/.mestrewrite/config.json`): `silencioDuracao`
 > (s p/ parar), `silencioLimiar` (% — menor = mais sensível), `autoParar`
 > (`false` volta ao modo só-manual). Ver [[ADR-009-vad-silencio-e-otimizacao]].
 
-## 🛠️ Problemas comuns
+## Problemas comuns
 | Sintoma | Causa / solução |
 |---------|-----------------|
 | Notificação "sox não encontrado" | `brew install sox` |

@@ -8,18 +8,18 @@ atrapalhar. A inspiração estética é a linguagem **Apple Intelligence**.
 > + orb WebGL + glow nas bordas). O histórico da v1 (orb Canvas 2D + anel reto)
 > está em [[ADR-004-overlay-visual]]; as mudanças da v2, em [[ADR-005-overlay-pilula-webgl]].
 
-## 💊 A pílula de voz
+## A pílula de voz
 O indicador principal é uma **cápsula branca "frosted"** (estilo *dynamic island*)
 na parte inferior-central da tela, com dois elementos:
 
-- **🟣 Orb iridescente** — uma esferinha luminosa com **redemoinho violeta/magenta/
+- **Orb iridescente** — uma esferinha luminosa com **redemoinho violeta/magenta/
   índigo** que gira e respira. É o rosto do MestreWrite. Renderizada em **WebGL**
   (shader), não mais Canvas 2D.
-- **🌊 Waveform** — barras de áudio que ondulam, sugerindo a voz sendo captada.
+- **Waveform** — barras de áudio que ondulam, sugerindo a voz sendo captada.
 
 A pílula sobe com leve *overshoot* elástico e tem um **halo violeta que respira**.
 
-## 🌈 O glow nas bordas
+## O glow nas bordas
 Um **glow colorido** (espectro Apple-IA: azul→violeta→magenta→rosa) que abraça as
 **beiras de toda a tela** durante escuta e processamento, reforçando que o sistema
 está captando a voz. As cores **fluem** (rotação lenta + oscilação de matiz +
@@ -27,7 +27,7 @@ respiração). **Não tem cantos/raio fixo**: a faixa desbota para dentro a part
 cada beira e o arredondamento físico do display recorta o canto — encaixa em
 qualquer tela (ver [[ADR-005-overlay-pilula-webgl]]).
 
-## ✨ Ativação cinemática
+## Ativação cinemática
 Ao acionar o atalho (idle → ativo), há um **momento de ativação**: um *bloom* de
 luz floresce nas bordas e toca um **chime suave** (sintetizado, estilo Apple
 Intelligence). Feedback claro de "estou ouvindo".
@@ -43,7 +43,7 @@ Intelligence). Feedback claro de "estou ouvindo".
 A transição entre estados é suave (aparição/sumiço da pílula e do glow). Após
 processar, o texto é inserido (ver [[Arquitetura]]) e o overlay volta a **idle**.
 
-## 🪟 Setup de primeira execução
+## Setup de primeira execução
 Na primeira vez, o app abre uma tela (tema **claro**) para definir **atalho**,
 **idioma** e **modelo** — com a mesma identidade do overlay e **sem emojis**
 (ver [[ADR-007-setup-primeira-execucao]]). Decisões de design:
@@ -90,7 +90,7 @@ em [[ADR-004-overlay-visual]] e [[ADR-005-overlay-pilula-webgl]]):
 - **Adaptação à tela**: posição, largura do glow e tamanhos são **proporcionais ao
   tamanho da tela**, recalculados em `resize`.
 
-> ⚠️ Código em desenvolvimento; a estética foi muito iterada e segue ajustável.
+> Código em desenvolvimento; a estética foi muito iterada e segue ajustável.
 > O orb grande original (`src/overlay/orb.js`) está no disco mas desativado.
 
 Ver [[Stack-Técnico]], [[Arquitetura]] e [[ADR-001-electron]].

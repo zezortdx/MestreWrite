@@ -1,7 +1,7 @@
 # ADR-002 — Transcrição local com whisper.cpp
 
 ## Status
-✅ Aceito (2026)
+Aceito (2026)
 
 ## Contexto
 O reconhecimento de fala é o coração do MestreWrite. As opções principais eram:

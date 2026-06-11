@@ -1,7 +1,7 @@
 # ADR-006 — Backend funcional: state machine + módulos de áudio/transcrição/inserção
 
 ## Status
-✅ Aceito (2026-06)
+Aceito (2026-06)
 
 ## Contexto
 O MVP do MestreWrite precisava do fluxo completo de ponta a ponta:
@@ -38,7 +38,7 @@ TRANSCRIBING → [fim da transcrição] → IDLE (overlay: 'idle')
 ### Tray icon
 - Ícone na barra de menus: **PNG** roxo (círculos concêntricos) em `src/assets/`,
   carregado via `nativeImage.createFromPath` (+ `tray-icon@2x.png` p/ Retina).
-  ⚠️ `nativeImage` **não renderiza SVG** (data-URL SVG vira imagem vazia) — por
+ `nativeImage` **não renderiza SVG** (data-URL SVG vira imagem vazia) — por
   isso PNG. Salvaguarda: se o ícone falhar, um `tray.setTitle` mantém o tray clicável.
 - Tooltip dinâmico: "Pronto (Cmd+Shift+Space)" / "Gravando…" / "Transcrevendo…".
 - Menu com "Sair" (`role: 'quit'`).

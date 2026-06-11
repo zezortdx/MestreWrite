@@ -2,9 +2,9 @@
 
 Direção do MestreWrite, em fases. Cada fase entrega valor sozinha.
 
-> 🟢 **NO MVP ATUAL** · 🔜 **Futuro próximo** · 🟣 **Futuro / visão**
+> **NO MVP ATUAL** · **Futuro próximo** · **Futuro / visão**
 
-## Fase 1 — MVP 🟢 (concluído)
+## Fase 1 — MVP (concluído)
 **Foco:** provar o fluxo central em macOS, com transcrição crua.
 
 - [x] Estrutura do projeto e documentação.
@@ -27,29 +27,29 @@ Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA d
 - [x] Ícones do app (fundo branco) e da bandeja (orb), gerados do orb ([[ADR-011-icones-app-e-tray]]).
 - [x] CI (GitHub Actions): build de `.dmg` (macOS) e `.exe` (Windows) por tag ([[ADR-010-suporte-windows-cross-platform]]).
 
-> 🔜 **Próximos:** instalador único (empacotar deps + modelo, ou baixar o modelo no
+> **Próximos:** instalador único (empacotar deps + modelo, ou baixar o modelo no
 > app), build **x64/universal** e **assinatura/notarização**.
 
-## Fase 2 — Correção por IA 🔜
+## Fase 2 — Correção por IA
 - [ ] Camada de correção inteligente (pontuação, limpeza, concordância).
 - [ ] [[Modos de escrita|Funcionalidades]] (formal, casual, código).
 - [ ] Comandos de voz básicos.
 
 Ver [[Funcionalidades]].
 
-## Fase 3 — Multiplataforma 🟣
+## Fase 3 — Multiplataforma
 - [~] Suporte a **Windows** — código cross-platform pronto + build via CI;
   runtime (SendKeys/áudio) **a validar** em Windows ([[ADR-010-suporte-windows-cross-platform]]).
 - [ ] Suporte a **Linux** (best-effort iniciado: colar via `xdotool`).
 - [ ] Captura de áudio nativa (substituir `sox` onde fizer sentido).
 - [ ] Inserção de texto nativa por plataforma.
 
-## Fase 4 — Extensões 🟣
+## Fase 4 — Extensões
 - [ ] Dicionário pessoal.
 - [ ] Histórico local.
 - [ ] Sistema de plugins/extensões.
 
-## Fase 5 — Plataforma 🟣
+## Fase 5 — Plataforma
 - [ ] Ecossistema de extensões da comunidade.
 - [ ] Integrações com fluxos de trabalho específicos.
 - [ ] Sincronização opcional (sempre respeitando a [[Privacidade]]).

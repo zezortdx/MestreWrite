@@ -1,7 +1,7 @@
 # ADR-004 — Overlay visual: janela transparente + orb em Canvas + borda em CSS
 
 ## Status
-✅ Aceito (2026) · 🔄 estética revisável · ✏️ **parcialmente emendado por
+Aceito (2026) · estética revisável · **parcialmente emendado por
 [[ADR-005-overlay-pilula-webgl]]** (a janela transparente, o click-through e o
 modelo de estados via IPC abaixo continuam valendo; o **orb Canvas 2D** e a
 **borda de cantos retos** foram substituídos por orb **WebGL** numa **pílula** e

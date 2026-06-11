@@ -1,7 +1,7 @@
 # ADR-001 — Electron como framework desktop
 
 ## Status
-✅ Aceito (2026)
+Aceito (2026)
 
 ## Contexto
 O MestreWrite precisa de um app desktop que: rode em macOS agora e em Windows/Linux

@@ -1,7 +1,7 @@
 # ADR-003 — Inserção de texto via área de transferência
 
 ## Status
-✅ Aceito para o MVP (2026) · 🔄 Revisável em fases futuras
+Aceito para o MVP (2026) · Revisável em fases futuras
 
 ## Contexto
 Para ser universal ("funciona em qualquer lugar", princípio da [[Visão]]), o

@@ -1,7 +1,7 @@
 # ADR-009 — Parada automática por silêncio (VAD) e otimizações de velocidade/peso
 
 ## Status
-✅ Aceito (2026-06)
+Aceito (2026-06)
 
 ## Contexto
 Dois problemas relatados:

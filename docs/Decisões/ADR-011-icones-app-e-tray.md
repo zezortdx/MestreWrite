@@ -17,8 +17,10 @@ para manter uma única fonte de verdade visual ([[ADR-008-empacotamento-electron
   o orb iridescente centralizado e um glow violeta suave — coerente com a pílula
   branca do overlay ([[Design]]). Vira `build-assets/icon.png` → `icon.icns` (macOS)
   e a base do `.ico` (Windows).
-- **Ícone da bandeja** (`scripts/tray.html`): **só o orb**, fundo transparente, com
-  um leve drop-shadow para destacar na barra. Vira `build-assets/tray-master.png` →
+- **Ícone da bandeja** (`scripts/tray.html`): o orb sobre fundo transparente. Como o
+  shader sozinho vira um **anel** (fraco em tamanho pequeno), há uma **base
+  preenchida** (gradiente radial violeta) por baixo + o anel iridescente por cima —
+  fica um orb sólido e legível na barra. Vira `build-assets/tray-master.png` →
   `src/assets/tray-icon.png` (22px) + `tray-icon@2x.png` (44px) via `sips`.
 
 `scripts/gerar-icone.js` renderiza os dois numa **única janela** (redimensionada
@@ -32,8 +34,8 @@ faz as conversões. Tudo por `npm run icone`.
 - Regeneráveis com um comando.
 
 **Negativas / trade-offs**
-- O orb é um **anel** (centro mais claro); muito pequeno na barra de menus pode ficar
-  sutil. Ajustável aumentando o tamanho/contraste em `scripts/tray.html`.
+- O orb do shader é um **anel**; para a bandeja foi preciso uma base preenchida por
+  baixo (em `scripts/tray.html`) p/ ler bem em ~18px. Verificado na barra de menus.
 
 ## Arquivos
 ### Modificados

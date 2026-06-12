@@ -35,8 +35,8 @@ Escopo detalhado em [[MVP]]. Só **macOS**, só **transcrição crua** (sem IA d
 - [ ] Camada de correção inteligente (pontuação, limpeza, concordância).
 - [ ] [[Modos de escrita|Funcionalidades]] (formal, casual, código).
 - [ ] Comandos de voz básicos.
-- [ ] Modelo melhor para PT (`small` ou `large-v3-turbo`) — maior acurácia/consistência;
-  já viável sem perder velocidade graças ao servidor persistente ([[ADR-012-desempenho-stt-servidor-vad]]).
+- [x] Modelo melhor para PT (`large-v3-turbo-q5_0`) — maior acurácia/consistência;
+  viável sem perder velocidade graças ao servidor persistente e quantização Q5 ([[ADR-013-inteligencia-pipeline-audio]]).
 
 Ver [[Funcionalidades]].
 

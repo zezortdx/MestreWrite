@@ -42,6 +42,7 @@ voz local, offline e open source para desktop.
 - [[ADR-010-suporte-windows-cross-platform]] — código cross-platform + build Windows via CI.
 - [[ADR-011-icones-app-e-tray]] — ícone do app (branco) e da bandeja (orb).
 - [[ADR-012-desempenho-stt-servidor-vad]] — STT rápido: servidor persistente + VAD/flags.
+- [[ADR-013-inteligencia-pipeline-audio]] — inteligência: compand/VAD tolerante + Q5 + prompt/entropia.
 
 ---
 

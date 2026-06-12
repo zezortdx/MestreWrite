@@ -13,7 +13,7 @@ const fs = require('fs');
 const { resolverBinario, pathAumentado } = require('./binpath');
 const {
   PATH_MODELO, IDIOMA, THREADS, FLASH_ATTN, NO_FALLBACK, SUPRIMIR_NST,
-  NO_CONTEXTO, BEAM_SIZE,
+  NO_CONTEXTO, BEAM_SIZE, PROMPT, ENTROPIA_LIMIAR,
 } = require('./config');
 
 const HOST = '127.0.0.1';
@@ -63,6 +63,8 @@ async function iniciarServidor() {
     '-nt',
     '-bs', String(BEAM_SIZE || 1),
   ];
+  if (PROMPT) args.push('--prompt', PROMPT);
+  if (ENTROPIA_LIMIAR) args.push('--entropy-thold', String(ENTROPIA_LIMIAR));
   if (FLASH_ATTN) args.push('-fa');
   if (NO_FALLBACK) args.push('--no-fallback');
   if (SUPRIMIR_NST) args.push('--suppress-nst');
@@ -72,6 +74,7 @@ async function iniciarServidor() {
     proc = spawn(bin, args, {
       env: { ...process.env, PATH: pathAumentado() },
       stdio: 'ignore',
+      windowsHide: true,
     });
   } catch {
     proc = null;
@@ -81,7 +84,7 @@ async function iniciarServidor() {
   proc.on('error', () => { proc = null; pronto = false; });
   proc.on('exit', () => { proc = null; pronto = false; });
 
-  pronto = await aguardarPronto(8000);
+  pronto = await aguardarPronto(15000);
   if (!pronto) pararServidor();
   return pronto;
 }
@@ -92,12 +95,14 @@ function servidorPronto() {
 
 // Transcreve um .wav via POST /inference. Lança erro se falhar (→ fallback CLI).
 async function transcreverViaServidor(caminhoWav) {
-  const buf = fs.readFileSync(caminhoWav);
+  const buf = await fs.promises.readFile(caminhoWav);
   const fd = new FormData();
   fd.append('file', new Blob([buf]), 'audio.wav');
   fd.append('response_format', 'text');
   fd.append('temperature', '0.0');
+  fd.append('temperature_inc', '0.0'); // sem retries com temperaturas mais altas → mais rápido
   fd.append('language', IDIOMA);
+  if (PROMPT) fd.append('prompt', PROMPT);
 
   const res = await fetch(`http://${HOST}:${porta}/inference`, {
     method: 'POST',

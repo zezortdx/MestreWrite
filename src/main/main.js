@@ -18,8 +18,13 @@ process.env.PATH = pathAumentado();
 // caching de imports com valores default antes do setup salvar a config real.
 const { configExiste, salvarConfig } = require('./configManager');
 
+let setupWin = null;
 function abrirSetup() {
-  const setupWin = new BrowserWindow({
+  if (setupWin) {
+    setupWin.focus();
+    return;
+  }
+  setupWin = new BrowserWindow({
     width: 800,
     height: 640,
     frame: false,
@@ -38,16 +43,26 @@ function abrirSetup() {
 
   setupWin.loadFile(path.join(__dirname, '..', 'setup', 'index.html'));
 
-  ipcMain.once('setup-concluido', (_event, config) => {
+  const onConcluido = (_event, config) => {
     salvarConfig(config);
-    setupWin.close();
+    if (setupWin) setupWin.close();
     app.relaunch();
     app.exit(0);
+  };
+  ipcMain.once('setup-concluido', onConcluido);
+
+  setupWin.on('closed', () => {
+    setupWin = null;
+    ipcMain.removeListener('setup-concluido', onConcluido);
   });
 }
 
+ipcMain.handle('obter-config-atual', () => {
+  return require('./configManager').carregarConfig();
+});
+
 // ── Módulos de negócio (carregados só após setup confirmar que config existe) ─
-const { TECLA_ATALHO, PATH_MODELO, DURACAO_MAX, USAR_SERVIDOR } = require('./config');
+const { TECLA_ATALHO, PATH_MODELO, DURACAO_MAX, USAR_SERVIDOR, MODELO } = require('./config');
 const { iniciarGravacao, pararGravacao } = require('./audio');
 const { transcrever, modeloExiste, caminhoModelo } = require('./transcribe');
 const { inserirTexto } = require('./typer');
@@ -102,6 +117,11 @@ function criarTray() {
     {
       label: 'MestreWrite',
       enabled: false,
+    },
+    { type: 'separator' },
+    {
+      label: 'Configurações',
+      click: () => abrirSetup(),
     },
     { type: 'separator' },
     {
@@ -178,7 +198,7 @@ function toggleGravacao() {
     if (!modeloExiste()) {
       notificar(
         'MestreWrite — Modelo não encontrado',
-        `Baixe o modelo com:\ncurl -L -o ${caminhoModelo()} https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin`
+        `Baixe o modelo com:\ncurl -L -o ${caminhoModelo()} https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-${MODELO}.bin`
       );
       return;
     }
@@ -273,7 +293,7 @@ app.whenReady().then(() => {
     console.warn('[main] Modelo whisper não encontrado em:', PATH_MODELO);
     notificar(
       'MestreWrite — Modelo não encontrado',
-      `Baixe com:\ncurl -L -o ${caminhoModelo()} https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin`
+      `Baixe com:\ncurl -L -o ${caminhoModelo()} https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-${MODELO}.bin`
     );
   }
 
@@ -287,8 +307,8 @@ app.whenReady().then(() => {
     console.error(`[main] Falha ao registrar atalho: ${TECLA_ATALHO}`);
   }
 
-  // Sobe o whisper-server persistente (best-effort). Se não subir, o
-  // transcribe.js usa o whisper-cli automaticamente (fallback).
+  // Sobe o whisper-server em paralelo com o overlay (não bloqueia a UI).
+  // O modelo carrega na RAM enquanto o overlay renderiza.
   if (USAR_SERVIDOR && modeloExiste()) {
     iniciarServidor().then((ok) => {
       console.log(ok

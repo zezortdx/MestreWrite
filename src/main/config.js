@@ -18,6 +18,8 @@ module.exports = {
   NO_CONTEXTO: config.noContexto,
   BEAM_SIZE: config.beamSize,
   USAR_SERVIDOR: config.usarServidor,
+  PROMPT: config.prompt,
+  ENTROPIA_LIMIAR: config.entropiaLimiar,
   AUTO_PARAR: config.autoParar,
   SILENCIO_LIMIAR: config.silencioLimiar,
   SILENCIO_DURACAO: config.silencioDuracao,

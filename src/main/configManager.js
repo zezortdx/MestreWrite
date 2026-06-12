@@ -8,19 +8,25 @@ const ARQUIVO_CONFIG = path.join(DIR_CONFIG, 'config.json');
 const DEFAULTS = {
   atalho: 'CmdOrCtrl+Shift+Space',
   idioma: 'pt',
-  modelo: 'base',
+  modelo: 'large-v3-turbo-q5_0',
   // Aproveita os núcleos de performance (Apple Silicon costuma ter 4–8).
   threads: Math.min(8, os.cpus().length || 4),
-  flashAttn: false, // PT: ganho ~0 e pode degradar qualidade (whisper.cpp #3020)
+  flashAttn: process.platform === 'darwin', // Acelera no Apple Silicon, previne crash no Windows
   noFallback: true,
   suprimirNst: true,
   noContexto: true, // -nc: cada ditado é independente (evita arrastar alucinação)
-  beamSize: 1, // greedy: determinístico e mais rápido
+  beamSize: 2, // beam 2: boa precisão com modelo large, sem latência extra
   usarServidor: true, // whisper-server persistente (elimina o cold-start do modelo)
+  // Initial prompt: guia o Whisper para PT-BR com pontuação e acentuação corretas.
+  // NÃO é uma instrução — é um trecho de texto que o modelo "acredita" veio antes do áudio.
+  prompt: 'Olá, este é um ditado em português brasileiro. Vou falar naturalmente, com pontuação e acentuação corretas.',
+  // Threshold de entropia: segmentos com entropia acima desse valor são descartados
+  // (indica baixa confiança → provavelmente alucinação). 2.8 é um bom equilíbrio.
+  entropiaLimiar: 2.8,
   // Parada automática por silêncio (VAD nativo do sox — ver audio.js).
   autoParar: true,
-  silencioLimiar: 2, // % do volume tido como "silêncio"
-  silencioDuracao: 0.8, // s de silêncio p/ encerrar (antes 1.8 — menos espera)
+  silencioLimiar: 3, // % do volume tido como "silêncio" (3% evita cortar consoantes fracas)
+  silencioDuracao: 1.2, // s de silêncio p/ encerrar (1.2s tolera pausas naturais na fala rápida)
   duracaoMax: 30, // s — trava de segurança (força a parada)
 };
 
@@ -65,7 +71,7 @@ function salvarConfig(dados) {
 }
 
 function caminhoModelo(tamanho) {
-  const nome = tamanho || 'base';
+  const nome = tamanho || 'large-v3-turbo-q5_0';
   return path.join(os.homedir(), 'mestrewrite', 'models', `ggml-${nome}.bin`);
 }
 

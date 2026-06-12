@@ -17,7 +17,7 @@ function comandoColar() {
       cmd: 'osascript',
       args: ['-'],
       stdin: 'tell application "System Events"\nkeystroke "v" using command down\nend tell',
-      restauraMs: 300,
+      restauraMs: 150,
     };
   }
   if (process.platform === 'win32') {
@@ -70,6 +70,7 @@ function inserirTexto(texto) {
     // 3. Simular a colagem.
     const child = spawn(cmd, args, {
       stdio: [stdin != null ? 'pipe' : 'ignore', 'ignore', 'pipe'],
+      windowsHide: true,
     });
 
     let erroStderr = '';

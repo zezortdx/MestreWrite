@@ -40,14 +40,21 @@ function iniciarGravacao() {
       : ['-d'];
 
     // sox <entrada> -r 16000 -c 1 -b 16 <arquivo.wav> [efeitos]
-    const args = [...entrada, '-r', '16000', '-c', '1', '-b', '16', caminhoWav, 'highpass', '80'];
+    // `compand` equaliza volume em tempo real (norm é incompatível com gravação ao vivo).
+    // `highpass 80` remove ruído de baixa frequência.
+    const args = [...entrada, '-r', '16000', '-c', '1', '-b', '16', caminhoWav,
+      'compand', '0.02,0.05', '-90,-90,-70,-70,-60,-20,0,0', '-5', '-90', '0.1',
+      'highpass', '80',
+    ];
     if (AUTO_PARAR) {
       const limiar = `${SILENCIO_LIMIAR}%`;
       // silence 1 0.1 L  → começa ao detectar fala (corta silêncio inicial)
       // 1 <dur> L        → encerra após <dur>s de silêncio contínuo
       args.push('silence', '1', '0.1', limiar, '1', String(SILENCIO_DURACAO), limiar);
+      // pad: adiciona 300ms de silêncio no final para não cortar a última palavra.
+      args.push('pad', '0', '0.3');
     }
-    processoGravacao = spawn(SOX_BIN, args, { stdio: 'ignore' });
+    processoGravacao = spawn(SOX_BIN, args, { stdio: 'ignore', windowsHide: true });
 
     let erroInicial = null;
 
@@ -96,7 +103,9 @@ function pararGravacao() {
       resolve();
     });
 
-    proc.kill('SIGTERM');
+    // SIGINT no macOS faz o sox escrever os headers WAV corretamente;
+    // SIGTERM pode truncar o arquivo. No Windows não há diferença.
+    proc.kill(process.platform === 'win32' ? 'SIGTERM' : 'SIGINT');
   });
 }
 

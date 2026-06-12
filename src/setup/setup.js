@@ -100,6 +100,37 @@
   let atalho = "CommandOrControl+Shift+Space";
   let capturando = false;
 
+  if (window.mestreSetup && window.mestreSetup.getConfigAtual) {
+    window.mestreSetup.getConfigAtual().then(config => {
+      if (config.atalho) {
+        atalho = config.atalho;
+        renderChips(atalho);
+      }
+      
+      const idiomaR = document.querySelector(`input[name="idioma"][value="${config.idioma}"]`);
+      if (idiomaR) {
+        idiomaR.checked = true;
+        document.getElementById('opcoesIdioma').querySelectorAll(".opcao").forEach(o => o.classList.remove("selecionada"));
+        idiomaR.closest(".opcao").classList.add("selecionada");
+      }
+
+      const modeloR = document.querySelector(`input[name="modelo"][value="${config.modelo}"]`);
+      if (modeloR) {
+        modeloR.checked = true;
+        document.getElementById('opcoesModelo').querySelectorAll(".opcao").forEach(o => o.classList.remove("selecionada"));
+        modeloR.closest(".opcao").classList.add("selecionada");
+        // Verifica se precisa ocultar nota de download
+        const instalado = modeloR.dataset.instalado === "true";
+        if (instalado) {
+          document.getElementById("notaDownload").hidden = true;
+        } else {
+          document.getElementById("comandoDownload").textContent = comandoCurl(modeloR.value);
+          document.getElementById("notaDownload").hidden = false;
+        }
+      }
+    });
+  }
+
   const MODIFICADORES = new Set([
     "MetaLeft", "MetaRight", "ControlLeft", "ControlRight",
     "ShiftLeft", "ShiftRight", "AltLeft", "AltRight",
